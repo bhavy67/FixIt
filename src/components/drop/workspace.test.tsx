@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Workspace } from './workspace';
 import { useFilesStore } from '@/stores/files-store';
+import { useJobStore } from '@/stores/job-store';
+import { registerAllTools } from '@/tools';
 
 function makeFile(name: string, type = 'text/plain') {
   return new File(['hello'], name, { type });
@@ -11,6 +13,8 @@ function makeFile(name: string, type = 'text/plain') {
 describe('Workspace', () => {
   beforeEach(() => {
     useFilesStore.getState().clear();
+    useJobStore.getState().reset();
+    registerAllTools();
   });
 
   it('shows the DropZone by default with a Choose files button', () => {
@@ -19,7 +23,7 @@ describe('Workspace', () => {
     expect(screen.getByText(/drop files here/i)).toBeInTheDocument();
   });
 
-  it('renders the file list when a file is added via the picker', async () => {
+  it('shows the empty tool picker when files have no matching tool', async () => {
     const user = userEvent.setup();
     render(<Workspace />);
 
@@ -29,8 +33,20 @@ describe('Workspace', () => {
 
     expect(await screen.findByText('greeting.txt')).toBeInTheDocument();
     expect(screen.getByText(/1 file ready/i)).toBeInTheDocument();
-    // Tool picker shows its empty state since no tools are registered yet
     expect(screen.getByTestId('tool-picker-empty')).toBeInTheDocument();
+  });
+
+  it('shows Image Resize as a match for an image file and opens Configure on click', async () => {
+    const user = userEvent.setup();
+    await useFilesStore.getState().add([makeFile('cat.png', 'image/png')]);
+    render(<Workspace />);
+
+    const pickerCard = await screen.findByRole('button', { name: /image resize/i });
+    await user.click(pickerCard);
+
+    // Configure panel shows a Run button; picker is gone
+    expect(await screen.findByRole('button', { name: /run image resize/i })).toBeInTheDocument();
+    expect(screen.queryByTestId('tool-picker-empty')).not.toBeInTheDocument();
   });
 
   it('removes an individual file', async () => {

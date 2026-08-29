@@ -4,12 +4,19 @@ import { useMemo } from 'react';
 import { Wrench, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { matchToolsForFiles } from '@/core/tool-registry';
+import type { ToolDefinition } from '@/core/tool-types';
 import { useFilesStore } from '@/stores/files-store';
 import { toolCategories } from '@/lib/site-config';
+// Side-effect import: triggers tool registration on module load.
+import '@/tools';
 
 const categoryLabel = (slug: string) => toolCategories.find((c) => c.slug === slug)?.label ?? slug;
 
-export function ToolPicker() {
+type ToolPickerProps = {
+  onPick?: (tool: ToolDefinition<unknown>) => void;
+};
+
+export function ToolPicker({ onPick }: ToolPickerProps = {}) {
   const files = useFilesStore((s) => s.files);
   const matches = useMemo(() => matchToolsForFiles(files), [files]);
 
@@ -24,8 +31,7 @@ export function ToolPicker() {
         <Wrench className="size-5" aria-hidden />
         <p className="text-foreground font-medium">No tools for these files yet</p>
         <p className="max-w-sm text-xs">
-          The first tool (Image Resize) arrives in Phase 5. New tools automatically show up here
-          when they match what you dropped.
+          No registered tool accepts this combination of files. Try adjusting the selection.
         </p>
       </div>
     );
@@ -39,6 +45,8 @@ export function ToolPicker() {
           <li key={tool.id}>
             <button
               type="button"
+              onClick={() => onPick?.(tool)}
+              data-tool-id={tool.id}
               className="group border-border bg-card hover:border-primary/50 focus-visible:ring-ring focus-visible:ring-offset-background flex w-full items-center justify-between gap-3 rounded-xl border p-3 text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               <div className="min-w-0">
