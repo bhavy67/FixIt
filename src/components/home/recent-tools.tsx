@@ -1,0 +1,62 @@
+'use client';
+
+import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { usePreferencesStore } from '@/stores/preferences-store';
+import { TOOLS_META } from '@/tools/meta';
+import { toolCategories } from '@/lib/site-config';
+
+const categoryLabel = (slug: string) => toolCategories.find((c) => c.slug === slug)?.label ?? slug;
+
+export function RecentTools() {
+  const recentIds = usePreferencesStore((s) => s.recentToolIds);
+
+  const recentTools = recentIds
+    .map((id) => TOOLS_META.find((t) => t.id === id))
+    .filter((t) => t !== undefined);
+
+  if (recentTools.length === 0) return null;
+
+  return (
+    <section className="mx-auto max-w-6xl px-4 pb-8 sm:px-6">
+      <h2 className="mb-4 text-lg font-semibold tracking-tight sm:text-xl">Recently used</h2>
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {recentTools.map((tool) => (
+          <li key={tool.id}>
+            <Link
+              href={`/tools/${tool.slug}`}
+              className="group focus-visible:ring-ring focus-visible:ring-offset-background block h-full rounded-xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+            >
+              <Card className="group-hover:border-primary/50 h-full gap-3 transition-colors">
+                <CardHeader>
+                  <Badge variant="outline" className="mb-1 w-fit text-xs font-normal">
+                    {categoryLabel(tool.category)}
+                  </Badge>
+                  <CardTitle className="text-base">{tool.name}</CardTitle>
+                  <CardAction>
+                    <ArrowUpRight
+                      className="text-muted-foreground group-hover:text-primary size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      aria-hidden
+                    />
+                  </CardAction>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>{tool.tagline}</CardDescription>
+                </CardContent>
+              </Card>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}

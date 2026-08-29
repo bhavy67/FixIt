@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useFilesStore } from '@/stores/files-store';
 import { useJobStore } from '@/stores/job-store';
+import { usePreferencesStore } from '@/stores/preferences-store';
 import { runTool } from '@/core/engine';
 import { ProcessingCancelledError, ProcessingError } from '@/core/errors';
 import { getToolById, matchToolsForFiles } from '@/core/tool-registry';
@@ -37,6 +38,7 @@ export function Workspace({ presetToolId }: WorkspaceProps = {}) {
   const succeed = useJobStore((s) => s.succeed);
   const fail = useJobStore((s) => s.fail);
   const resetJob = useJobStore((s) => s.reset);
+  const recordToolUse = usePreferencesStore((s) => s.recordToolUse);
 
   const presetTool = useMemo(
     () => (presetToolId ? (getToolById(presetToolId) ?? null) : null),
@@ -64,6 +66,7 @@ export function Workspace({ presetToolId }: WorkspaceProps = {}) {
           signal: controller.signal,
           onProgress: setProgress,
         });
+        recordToolUse(tool.id);
         succeed(res);
       } catch (err) {
         if (err instanceof ProcessingCancelledError) {

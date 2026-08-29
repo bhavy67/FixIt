@@ -1,9 +1,11 @@
 'use client';
 
-import { Check, Download, RotateCcw } from 'lucide-react';
+import { useState } from 'react';
+import { Check, Download, RotateCcw, Archive } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatBytes } from '@/lib/format-bytes';
 import { downloadBlob } from '@/lib/download';
+import { zipBlobs } from '@/lib/zip';
 import type { ProcessingResult } from '@/core/tool-types';
 import type { InspectedFile } from '@/core/file-types';
 import { BeforeAfter } from './before-after';
@@ -22,6 +24,7 @@ const isTextishBlob = (blob: Blob) =>
   blob.type === 'application/xml';
 
 export function ResultPanel({ result, originalFiles, onReset }: Props) {
+  const [zipping, setZipping] = useState(false);
   const first = result.outputs[0];
   const firstOriginal = originalFiles[0];
   const showBeforeAfter =
@@ -45,6 +48,24 @@ export function ResultPanel({ result, originalFiles, onReset }: Props) {
             {result.outputs.length} file{result.outputs.length === 1 ? '' : 's'} ready
           </p>
         </div>
+        {result.outputs.length > 1 && (
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={zipping}
+            onClick={async () => {
+              setZipping(true);
+              try {
+                await zipBlobs(result.outputs, 'fixit-results.zip');
+              } finally {
+                setZipping(false);
+              }
+            }}
+          >
+            <Archive className="size-4" aria-hidden />
+            {zipping ? 'Zipping…' : 'Download all'}
+          </Button>
+        )}
       </div>
 
       {showBeforeAfter && first && firstOriginal ? (

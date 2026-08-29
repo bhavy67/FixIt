@@ -54,7 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
       className={`${GeistSans.variable} ${GeistMono.variable}`}
     >
-      <body className="bg-background text-foreground min-h-dvh antialiased">
+      <body suppressHydrationWarning className="bg-background text-foreground min-h-dvh antialiased">
         <a
           href="#main"
           className="bg-primary text-primary-foreground focus-visible:ring-ring sr-only rounded-md px-3 py-2 text-sm font-medium focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3 focus-visible:z-50 focus-visible:ring-2 focus-visible:outline-none"
