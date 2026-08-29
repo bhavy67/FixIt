@@ -1,6 +1,7 @@
 import { registerTool } from '@/core/tool-registry';
 import { imageResizeTool } from './image-resize/definition';
 import { jsonFormatterTool } from './json-formatter/definition';
+import { pdfMergeTool } from './pdf-merge/definition';
 
 // Side effect: run once when this module is first imported.
 let registered = false;
@@ -9,6 +10,7 @@ function ensureRegistered(): void {
   registered = true;
   registerTool(imageResizeTool);
   registerTool(jsonFormatterTool);
+  registerTool(pdfMergeTool);
 }
 
 ensureRegistered();

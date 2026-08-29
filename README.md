@@ -6,7 +6,7 @@ A local-first browser utility for annoying file operations. Everything runs in y
 
 ## Status
 
-Phase 6 · Second tool shipped. **JSON Formatter** (pretty / minify, 2 or 4 space indent) validates the trivial-tool path — zero deps, no worker, text preview. Adding it required only additive changes (new tool folder + one registration line + a new preview component), confirming the pattern is right.
+Phase 7 · Worker path validated. **Merge PDF** combines any number of PDFs via a Web Worker with `pdf-lib` dynamically imported inside the worker — first-load JS is unchanged from Phase 6 (212 kB), so pdf-lib (~200 KB) is nowhere near the initial bundle.
 
 ## Tech
 
@@ -55,5 +55,5 @@ tests/
 4. Tool registry + engine ✅
 5. First tool: Image Resize ✅
 6. JSON Formatter ✅
-7. PDF Merge (worker + pdf-lib)
+7. PDF Merge (worker + pdf-lib) ✅
 8. Tool pages + SEO + polish
