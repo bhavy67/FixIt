@@ -6,7 +6,7 @@ A local-first browser utility for annoying file operations. Everything runs in y
 
 ## Status
 
-Phase 3 · Drop experience complete. Drag-and-drop or file-picker upload, magic-byte file inspection (PDF, PNG, JPEG, GIF, WebP, ZIP), typed file list with per-kind badges, add/remove/clear. Tool picker + processing still to come.
+Phase 4 · Tool registry and engine skeleton complete. Typed tool contract, module-level registry with per-file matching, engine runner with progress + AbortSignal + typed errors, job store, and a `ToolPicker` that lists matching tools (currently shows its empty state — no tools registered until Phase 5).
 
 ## Tech
 
@@ -52,7 +52,7 @@ tests/
 1. Foundation ✅
 2. Design system & shell ✅
 3. File inspection + drop experience ✅
-4. Tool registry + engine
+4. Tool registry + engine ✅
 5. First tool: Image Resize
 6. JSON Formatter
 7. PDF Merge (worker + pdf-lib)

@@ -29,8 +29,8 @@ describe('Workspace', () => {
 
     expect(await screen.findByText('greeting.txt')).toBeInTheDocument();
     expect(screen.getByText(/1 file ready/i)).toBeInTheDocument();
-    // Placeholder for Phase 4
-    expect(screen.getByText(/tool picker arrives in phase 4/i)).toBeInTheDocument();
+    // Tool picker shows its empty state since no tools are registered yet
+    expect(screen.getByTestId('tool-picker-empty')).toBeInTheDocument();
   });
 
   it('removes an individual file', async () => {

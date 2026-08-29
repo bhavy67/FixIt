@@ -1,8 +1,9 @@
 'use client';
 
-import { Trash2, Wrench } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useFilesStore } from '@/stores/files-store';
+import { ToolPicker } from '@/components/tools/tool-picker';
 import { DropZone } from './drop-zone';
 import { FileList } from './file-list';
 
@@ -19,7 +20,7 @@ export function Workspace() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-3 text-left">
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-4 text-left">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium">
           {count} file{count === 1 ? '' : 's'} ready
@@ -30,11 +31,8 @@ export function Workspace() {
         </Button>
       </div>
       <FileList />
+      <ToolPicker />
       <DropZone compact />
-      <div className="border-border bg-muted/40 text-muted-foreground mt-1 flex items-center justify-center gap-2 rounded-xl border border-dashed p-4 text-xs">
-        <Wrench className="size-3.5" aria-hidden />
-        Tool picker arrives in Phase 4.
-      </div>
     </div>
   );
 }

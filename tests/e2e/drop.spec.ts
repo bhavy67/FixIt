@@ -13,7 +13,8 @@ test('picking a file shows it in the file list, and it can be removed', async ({
 
   await expect(page.getByText('sample.pdf')).toBeVisible();
   await expect(page.getByText(/1 file ready/i)).toBeVisible();
-  await expect(page.getByText(/tool picker arrives in phase 4/i)).toBeVisible();
+  // ToolPicker shows its empty state (no tools registered yet)
+  await expect(page.getByText(/no tools for these files yet/i)).toBeVisible();
   // PDF badge derived from magic bytes
   await expect(page.getByText('PDF', { exact: true }).first()).toBeVisible();
 
