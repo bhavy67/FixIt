@@ -1,13 +1,12 @@
-import Link from 'next/link';
-import { ArrowRight, ShieldCheck, Zap } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ShieldCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Workspace } from '@/components/drop/workspace';
 import { siteConfig, toolCategories } from '@/lib/site-config';
 
 export function Hero() {
   return (
     <section className="relative overflow-hidden">
-      <div className="mx-auto max-w-4xl px-4 pt-16 pb-12 text-center sm:px-6 sm:pt-24 sm:pb-16">
+      <div className="mx-auto max-w-4xl px-4 pt-14 pb-12 text-center sm:px-6 sm:pt-20 sm:pb-16">
         <Badge variant="secondary" className="mb-5 rounded-full font-medium">
           <ShieldCheck className="size-3" aria-hidden />
           Local-first · no upload
@@ -17,21 +16,12 @@ export function Hero() {
           <span className="text-primary">Drop it.</span> Fix it. Done.
         </h1>
 
-        <p className="text-muted-foreground mx-auto mt-5 max-w-xl text-base text-balance sm:text-lg">
+        <p className="text-muted-foreground mx-auto mt-4 max-w-xl text-base text-balance sm:text-lg">
           {siteConfig.description}
         </p>
 
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Button size="lg" asChild className="min-w-40">
-            <Link href="/tools">
-              Browse tools
-              <ArrowRight className="size-4" aria-hidden />
-            </Link>
-          </Button>
-          <span className="text-muted-foreground inline-flex items-center gap-1.5 text-xs">
-            <Zap className="size-3.5" aria-hidden />
-            Drag-and-drop workspace arrives soon
-          </span>
+        <div className="mt-8 sm:mt-10">
+          <Workspace />
         </div>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-2">

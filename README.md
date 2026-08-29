@@ -6,7 +6,7 @@ A local-first browser utility for annoying file operations. Everything runs in y
 
 ## Status
 
-Phase 2 · Design system & shell complete. Responsive header, mobile drawer nav, footer, hero, popular-tools grid, light/dark theme. No functional tools yet.
+Phase 3 · Drop experience complete. Drag-and-drop or file-picker upload, magic-byte file inspection (PDF, PNG, JPEG, GIF, WebP, ZIP), typed file list with per-kind badges, add/remove/clear. Tool picker + processing still to come.
 
 ## Tech
 
@@ -51,7 +51,7 @@ tests/
 
 1. Foundation ✅
 2. Design system & shell ✅
-3. File inspection + drop experience
+3. File inspection + drop experience ✅
 4. Tool registry + engine
 5. First tool: Image Resize
 6. JSON Formatter
