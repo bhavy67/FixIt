@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,7 @@ import { useFilesStore } from '@/stores/files-store';
 import { useJobStore } from '@/stores/job-store';
 import { runTool } from '@/core/engine';
 import { ProcessingCancelledError, ProcessingError } from '@/core/errors';
+import { getToolById, matchToolsForFiles } from '@/core/tool-registry';
 import type { ToolDefinition } from '@/core/tool-types';
 import { ToolPicker } from '@/components/tools/tool-picker';
 import { ConfigurePanel } from '@/components/workspace/configure-panel';
@@ -16,8 +17,15 @@ import { ResultPanel } from '@/components/workspace/result-panel';
 import { ErrorPanel } from '@/components/workspace/error-panel';
 import { DropZone } from './drop-zone';
 import { FileList } from './file-list';
+// Side-effect import so the registry is populated before we look up presets.
+import '@/tools';
 
-export function Workspace() {
+type WorkspaceProps = {
+  /** When set, auto-selects this tool once matching files are dropped. */
+  presetToolId?: string;
+};
+
+export function Workspace({ presetToolId }: WorkspaceProps = {}) {
   const files = useFilesStore((s) => s.files);
   const clearFiles = useFilesStore((s) => s.clear);
 
@@ -30,8 +38,21 @@ export function Workspace() {
   const fail = useJobStore((s) => s.fail);
   const resetJob = useJobStore((s) => s.reset);
 
-  const [selectedTool, setSelectedTool] = useState<ToolDefinition<unknown> | null>(null);
+  const presetTool = useMemo(
+    () => (presetToolId ? (getToolById(presetToolId) ?? null) : null),
+    [presetToolId],
+  );
+
+  const [selectedTool, setSelectedTool] = useState<ToolDefinition<unknown> | null>(presetTool);
   const [lastOptions, setLastOptions] = useState<unknown>(null);
+
+  // A preset tool only counts as "selected" if the current files actually match it.
+  // Otherwise, fall through to the picker (which shows any tools that do match).
+  const matchesPreset = useMemo(() => {
+    if (!selectedTool || files.length === 0) return true;
+    return matchToolsForFiles(files).some((t) => t.id === selectedTool.id);
+  }, [selectedTool, files]);
+  const effectiveTool = matchesPreset ? selectedTool : null;
 
   const runSelected = useCallback(
     async (tool: ToolDefinition<unknown>, options: unknown) => {
@@ -65,9 +86,9 @@ export function Workspace() {
   const startOver = useCallback(() => {
     resetJob();
     clearFiles();
-    setSelectedTool(null);
+    setSelectedTool(presetTool);
     setLastOptions(null);
-  }, [resetJob, clearFiles]);
+  }, [resetJob, clearFiles, presetTool]);
 
   const retry = useCallback(() => {
     if (!selectedTool) {
@@ -78,10 +99,10 @@ export function Workspace() {
   }, [selectedTool, lastOptions, runSelected, resetJob]);
 
   // Running state
-  if (status === 'running' && selectedTool) {
+  if (status === 'running' && effectiveTool) {
     return (
       <div className="mx-auto w-full max-w-xl text-left">
-        <RunPanel toolName={selectedTool.name} />
+        <RunPanel toolName={effectiveTool.name} />
       </div>
     );
   }
@@ -125,7 +146,7 @@ export function Workspace() {
           size="sm"
           onClick={() => {
             clearFiles();
-            setSelectedTool(null);
+            setSelectedTool(presetTool);
           }}
         >
           <Trash2 className="size-4" aria-hidden />
@@ -134,17 +155,17 @@ export function Workspace() {
       </div>
       <FileList />
 
-      {selectedTool ? (
+      {effectiveTool ? (
         <ConfigurePanel
-          tool={selectedTool}
+          tool={effectiveTool}
           onBack={() => setSelectedTool(null)}
-          onRun={(opts) => void runSelected(selectedTool, opts)}
+          onRun={(opts) => void runSelected(effectiveTool, opts)}
         />
       ) : (
         <ToolPicker onPick={(tool) => setSelectedTool(tool)} />
       )}
 
-      {!selectedTool && <DropZone compact />}
+      {!effectiveTool && <DropZone compact />}
     </div>
   );
 }

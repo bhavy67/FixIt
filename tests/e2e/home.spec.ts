@@ -7,7 +7,7 @@ test('home renders hero, drop zone, and popular tools', async ({ page }) => {
   await expect(page.getByText(/drop files here/i)).toBeVisible();
   await expect(page.getByRole('button', { name: /choose files/i })).toBeVisible();
   await expect(page.getByRole('heading', { level: 2, name: 'Popular' })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Compress PDF/i })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Merge PDF/i })).toBeVisible();
 });
 
 test('primary nav Tools link navigates to /tools', async ({ page }) => {
@@ -26,5 +26,5 @@ test('primary nav Tools link navigates to /tools', async ({ page }) => {
   }
 
   await expect(page).toHaveURL(/\/tools$/);
-  await expect(page.getByRole('heading', { level: 1, name: /Tools coming soon/i })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: /All tools/i })).toBeVisible();
 });

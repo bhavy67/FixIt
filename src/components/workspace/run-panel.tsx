@@ -16,7 +16,7 @@ export function RunPanel({ toolName }: Props) {
   return (
     <div className="border-border bg-card flex flex-col gap-4 rounded-xl border p-6 text-center">
       <div className="text-primary inline-flex items-center justify-center">
-        <Loader2 className="size-6 animate-spin" aria-hidden />
+        <Loader2 className="size-6 animate-spin motion-reduce:animate-none" aria-hidden />
       </div>
       <div>
         <p className="text-sm font-medium">Running {toolName}…</p>

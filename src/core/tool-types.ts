@@ -39,7 +39,12 @@ export interface ProcessingContext<Options> {
   onProgress: (progress: number) => void;
 }
 
-export interface ToolDefinition<Options = unknown> {
+/**
+ * The pure metadata portion of a ToolDefinition — safe to import from
+ * Server Components and other framework-neutral contexts. No React,
+ * no processor references.
+ */
+export interface ToolMeta {
   id: string;
   slug: string;
   name: string;
@@ -48,6 +53,9 @@ export interface ToolDefinition<Options = unknown> {
   input: ToolInputSpec;
   output: ToolOutputSpec;
   mode: ProcessingMode;
+}
+
+export interface ToolDefinition<Options = unknown> extends ToolMeta {
   defaultOptions?: Options;
   OptionsForm?: ComponentType<OptionsFormProps<Options>>;
   process: (ctx: ProcessingContext<Options>) => Promise<ProcessingResult>;

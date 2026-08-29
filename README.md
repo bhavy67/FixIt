@@ -6,7 +6,7 @@ A local-first browser utility for annoying file operations. Everything runs in y
 
 ## Status
 
-Phase 7 · Worker path validated. **Merge PDF** combines any number of PDFs via a Web Worker with `pdf-lib` dynamically imported inside the worker — first-load JS is unchanged from Phase 6 (212 kB), so pdf-lib (~200 KB) is nowhere near the initial bundle.
+Phase 8 · Initial roadmap complete. Every tool has a discoverable landing page at `/tools/[slug]` with its own SEO metadata; the `/tools` index groups tools by category; the home Popular grid pulls from the actual registry; sitemap and robots are auto-generated. Skip-to-content link and `motion-reduce` on the spinner cover the highest-value a11y items.
 
 ## Tech
 
@@ -56,4 +56,4 @@ tests/
 5. First tool: Image Resize ✅
 6. JSON Formatter ✅
 7. PDF Merge (worker + pdf-lib) ✅
-8. Tool pages + SEO + polish
+8. Tool pages + SEO + polish ✅

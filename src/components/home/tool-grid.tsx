@@ -9,7 +9,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { popularTools, toolCategories } from '@/lib/site-config';
+import { TOOLS_META } from '@/tools/meta';
+import { toolCategories } from '@/lib/site-config';
 
 const categoryLabel = (slug: string) => toolCategories.find((c) => c.slug === slug)?.label ?? slug;
 
@@ -27,11 +28,10 @@ export function ToolGrid() {
       </div>
 
       <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {popularTools.map((tool) => (
-          <li key={tool.slug}>
+        {TOOLS_META.map((tool) => (
+          <li key={tool.id}>
             <Link
-              href="/tools"
-              aria-label={`${tool.name} — coming soon`}
+              href={`/tools/${tool.slug}`}
               className="group focus-visible:ring-ring focus-visible:ring-offset-background block h-full rounded-xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               <Card className="group-hover:border-primary/50 h-full gap-3 transition-colors">
@@ -48,7 +48,7 @@ export function ToolGrid() {
                   </CardAction>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription>{tool.description}</CardDescription>
+                  <CardDescription>{tool.tagline}</CardDescription>
                 </CardContent>
               </Card>
             </Link>
