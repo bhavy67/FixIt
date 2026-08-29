@@ -6,7 +6,7 @@ A local-first browser utility for annoying file operations. Everything runs in y
 
 ## Status
 
-Phase 1 · Foundation complete. Scaffolded skeleton only — no tools shipped yet.
+Phase 2 · Design system & shell complete. Responsive header, mobile drawer nav, footer, hero, popular-tools grid, light/dark theme. No functional tools yet.
 
 ## Tech
 
@@ -50,7 +50,7 @@ tests/
 ## Roadmap
 
 1. Foundation ✅
-2. Design system & shell
+2. Design system & shell ✅
 3. File inspection + drop experience
 4. Tool registry + engine
 5. First tool: Image Resize
