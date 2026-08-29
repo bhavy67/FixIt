@@ -6,7 +6,7 @@ A local-first browser utility for annoying file operations. Everything runs in y
 
 ## Status
 
-Phase 5 · First real tool shipped. Image Resize runs entirely in-browser via Canvas — pick, configure (dimensions, fit mode, PNG/JPEG/WebP with quality), progress, before/after preview, per-file download. This establishes the pattern all future tools follow.
+Phase 6 · Second tool shipped. **JSON Formatter** (pretty / minify, 2 or 4 space indent) validates the trivial-tool path — zero deps, no worker, text preview. Adding it required only additive changes (new tool folder + one registration line + a new preview component), confirming the pattern is right.
 
 ## Tech
 
@@ -54,6 +54,6 @@ tests/
 3. File inspection + drop experience ✅
 4. Tool registry + engine ✅
 5. First tool: Image Resize ✅
-6. JSON Formatter
+6. JSON Formatter ✅
 7. PDF Merge (worker + pdf-lib)
 8. Tool pages + SEO + polish

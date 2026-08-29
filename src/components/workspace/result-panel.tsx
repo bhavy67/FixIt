@@ -7,6 +7,7 @@ import { downloadBlob } from '@/lib/download';
 import type { ProcessingResult } from '@/core/tool-types';
 import type { InspectedFile } from '@/core/file-types';
 import { BeforeAfter } from './before-after';
+import { TextPreview } from './text-preview';
 
 type Props = {
   result: ProcessingResult;
@@ -15,6 +16,10 @@ type Props = {
 };
 
 const isImageBlob = (blob: Blob) => blob.type.startsWith('image/');
+const isTextishBlob = (blob: Blob) =>
+  blob.type.startsWith('text/') ||
+  blob.type === 'application/json' ||
+  blob.type === 'application/xml';
 
 export function ResultPanel({ result, originalFiles, onReset }: Props) {
   const first = result.outputs[0];
@@ -26,6 +31,7 @@ export function ResultPanel({ result, originalFiles, onReset }: Props) {
     firstOriginal !== undefined &&
     isImageBlob(first.blob) &&
     firstOriginal.kind === 'image';
+  const showTextPreview = !showBeforeAfter && first !== undefined && isTextishBlob(first.blob);
 
   return (
     <div className="flex flex-col gap-4">
@@ -43,6 +49,8 @@ export function ResultPanel({ result, originalFiles, onReset }: Props) {
 
       {showBeforeAfter && first && firstOriginal ? (
         <BeforeAfter originalFile={firstOriginal.file} outputBlob={first.blob} />
+      ) : showTextPreview && first ? (
+        <TextPreview blob={first.blob} />
       ) : null}
 
       <ul className="divide-border border-border bg-card divide-y overflow-hidden rounded-xl border">
