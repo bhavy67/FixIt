@@ -10,6 +10,12 @@ import { meta as pdfRotateMeta } from './pdf-rotate/meta';
 import { meta as pdfCompressMeta } from './pdf-compress/meta';
 import { meta as pdfMetaRemoverMeta } from './pdf-metadata-remover/meta';
 import { meta as pdfMetaViewerMeta } from './pdf-metadata-viewer/meta';
+import { meta as pdfToJpgMeta } from './pdf-to-jpg/meta';
+import { meta as pdfToPngMeta } from './pdf-to-png/meta';
+import { meta as pdfToWebpMeta } from './pdf-to-webp/meta';
+import { meta as jpgToPdfMeta } from './jpg-to-pdf/meta';
+import { meta as pngToPdfMeta } from './png-to-pdf/meta';
+import { meta as imagesToPdfMeta } from './images-to-pdf/meta';
 
 /**
  * The canonical list of registered tools' metadata. Safe to import from
@@ -27,6 +33,12 @@ export const TOOLS_META: readonly ToolMeta[] = [
   pdfCompressMeta,
   pdfMetaRemoverMeta,
   pdfMetaViewerMeta,
+  pdfToJpgMeta,
+  pdfToPngMeta,
+  pdfToWebpMeta,
+  jpgToPdfMeta,
+  pngToPdfMeta,
+  imagesToPdfMeta,
 ];
 
 export function getToolMetaBySlug(slug: string): ToolMeta | undefined {

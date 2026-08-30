@@ -10,6 +10,12 @@ import { pdfRotateTool } from './pdf-rotate/definition';
 import { pdfCompressTool } from './pdf-compress/definition';
 import { pdfMetaRemoverTool } from './pdf-metadata-remover/definition';
 import { pdfMetaViewerTool } from './pdf-metadata-viewer/definition';
+import { pdfToJpgTool } from './pdf-to-jpg/definition';
+import { pdfToPngTool } from './pdf-to-png/definition';
+import { pdfToWebpTool } from './pdf-to-webp/definition';
+import { jpgToPdfTool } from './jpg-to-pdf/definition';
+import { pngToPdfTool } from './png-to-pdf/definition';
+import { imagesToPdfTool } from './images-to-pdf/definition';
 
 // Side effect: run once when this module is first imported.
 let registered = false;
@@ -27,6 +33,12 @@ function ensureRegistered(): void {
   registerTool(pdfCompressTool);
   registerTool(pdfMetaRemoverTool);
   registerTool(pdfMetaViewerTool);
+  registerTool(pdfToJpgTool);
+  registerTool(pdfToPngTool);
+  registerTool(pdfToWebpTool);
+  registerTool(jpgToPdfTool);
+  registerTool(pngToPdfTool);
+  registerTool(imagesToPdfTool);
 }
 
 ensureRegistered();
