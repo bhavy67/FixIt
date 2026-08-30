@@ -13,6 +13,7 @@ export type NavItem = {
 export const navItems: readonly NavItem[] = [
   { label: 'Tools', href: '/tools' },
   { label: 'Workflow', href: '/workflow' },
+  { label: 'Scan', href: '/scan' },
 ];
 
 export type ToolCategory = {

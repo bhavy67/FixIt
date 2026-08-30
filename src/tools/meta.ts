@@ -37,6 +37,7 @@ import { meta as epubToPdfMeta } from './epub-to-pdf/meta';
 import { meta as pdfSignMeta } from './pdf-sign/meta';
 import { meta as pdfCropMeta } from './pdf-crop/meta';
 import { meta as pdfRedactMeta } from './pdf-redact/meta';
+import { meta as pdfOcrMeta } from './pdf-ocr/meta';
 
 /**
  * The canonical list of registered tools' metadata. Safe to import from
@@ -81,6 +82,7 @@ export const TOOLS_META: readonly ToolMeta[] = [
   pdfSignMeta,
   pdfCropMeta,
   pdfRedactMeta,
+  pdfOcrMeta,
 ];
 
 export function getToolMetaBySlug(slug: string): ToolMeta | undefined {

@@ -37,6 +37,7 @@ import { epubToPdfTool } from './epub-to-pdf/definition';
 import { pdfSignTool } from './pdf-sign/definition';
 import { pdfCropTool } from './pdf-crop/definition';
 import { pdfRedactTool } from './pdf-redact/definition';
+import { pdfOcrTool } from './pdf-ocr/definition';
 
 // Side effect: run once when this module is first imported.
 let registered = false;
@@ -81,6 +82,7 @@ function ensureRegistered(): void {
   registerTool(pdfSignTool);
   registerTool(pdfCropTool);
   registerTool(pdfRedactTool);
+  registerTool(pdfOcrTool);
 }
 
 ensureRegistered();
