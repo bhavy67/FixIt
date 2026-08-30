@@ -34,6 +34,9 @@ import { htmlToPdfTool } from './html-to-pdf/definition';
 import { txtToPdfTool } from './txt-to-pdf/definition';
 import { csvToPdfTool } from './csv-to-pdf/definition';
 import { epubToPdfTool } from './epub-to-pdf/definition';
+import { pdfSignTool } from './pdf-sign/definition';
+import { pdfCropTool } from './pdf-crop/definition';
+import { pdfRedactTool } from './pdf-redact/definition';
 
 // Side effect: run once when this module is first imported.
 let registered = false;
@@ -75,6 +78,9 @@ function ensureRegistered(): void {
   registerTool(txtToPdfTool);
   registerTool(csvToPdfTool);
   registerTool(epubToPdfTool);
+  registerTool(pdfSignTool);
+  registerTool(pdfCropTool);
+  registerTool(pdfRedactTool);
 }
 
 ensureRegistered();

@@ -34,6 +34,9 @@ import { meta as htmlToPdfMeta } from './html-to-pdf/meta';
 import { meta as txtToPdfMeta } from './txt-to-pdf/meta';
 import { meta as csvToPdfMeta } from './csv-to-pdf/meta';
 import { meta as epubToPdfMeta } from './epub-to-pdf/meta';
+import { meta as pdfSignMeta } from './pdf-sign/meta';
+import { meta as pdfCropMeta } from './pdf-crop/meta';
+import { meta as pdfRedactMeta } from './pdf-redact/meta';
 
 /**
  * The canonical list of registered tools' metadata. Safe to import from
@@ -75,6 +78,9 @@ export const TOOLS_META: readonly ToolMeta[] = [
   txtToPdfMeta,
   csvToPdfMeta,
   epubToPdfMeta,
+  pdfSignMeta,
+  pdfCropMeta,
+  pdfRedactMeta,
 ];
 
 export function getToolMetaBySlug(slug: string): ToolMeta | undefined {

@@ -10,7 +10,10 @@ export type NavItem = {
   href: string;
 };
 
-export const navItems: readonly NavItem[] = [{ label: 'Tools', href: '/tools' }];
+export const navItems: readonly NavItem[] = [
+  { label: 'Tools', href: '/tools' },
+  { label: 'Workflow', href: '/workflow' },
+];
 
 export type ToolCategory = {
   slug: 'pdf' | 'image' | 'data' | 'text' | 'pdf-security';
