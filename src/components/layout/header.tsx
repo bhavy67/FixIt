@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { BrandMark } from '@/components/common/brand-mark';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { MobileNav } from '@/components/layout/mobile-nav';
+import { CommandPaletteTrigger } from '@/components/tools/command-palette';
 import { navItems } from '@/lib/site-config';
 
 export function Header() {
@@ -29,6 +30,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-1">
+          <CommandPaletteTrigger />
           <ThemeToggle />
           <MobileNav />
         </div>
