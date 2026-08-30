@@ -51,7 +51,7 @@ export function PdfRotateOptionsForm({ value, onChange }: OptionsFormProps<PdfRo
           className={inputCls}
         />
         <p className="text-muted-foreground text-xs">
-          Enter page numbers or ranges, or leave "all" to rotate every page.
+          Enter page numbers or ranges, or leave &ldquo;all&rdquo; to rotate every page.
         </p>
       </div>
     </div>
