@@ -1,40 +1,54 @@
-import { ShieldCheck } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Shield, Zap, Package, Globe } from 'lucide-react';
 import { Workspace } from '@/components/drop/workspace';
-import { siteConfig, toolCategories } from '@/lib/site-config';
+
+const features = [
+  { icon: Shield, label: 'Files never leave your device' },
+  { icon: Zap, label: 'Instant results' },
+  { icon: Package, label: '40+ tools' },
+  { icon: Globe, label: 'Works offline' },
+] as const;
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden">
-      <div className="mx-auto max-w-4xl px-4 pt-14 pb-12 text-center sm:px-6 sm:pt-20 sm:pb-16">
-        <Badge variant="secondary" className="mb-5 rounded-full font-medium">
-          <ShieldCheck className="size-3" aria-hidden />
-          Local-first · no upload
-        </Badge>
+    <>
+      <section className="flex flex-col items-center pt-16 pb-8 px-4 text-center gap-6">
+        {/* Tagline chip */}
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground">
+          <span className="size-1.5 rounded-full bg-primary inline-block" />
+          100% local &middot; nothing uploaded
+        </div>
 
-        <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-6xl">
-          <span className="text-primary">Drop it.</span> Fix it. Done.
+        {/* Main heading */}
+        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight max-w-lg">
+          Drop it.<br />
+          <span className="text-primary">Fix it.</span><br />
+          Done.
         </h1>
 
-        <p className="text-muted-foreground mx-auto mt-4 max-w-xl text-base text-balance sm:text-lg">
-          {siteConfig.description}
+        {/* One-line sub */}
+        <p className="text-muted-foreground text-lg max-w-sm">
+          40+ file tools that run entirely in your browser.
         </p>
+      </section>
 
-        <div className="mt-8 sm:mt-10">
+      {/* Workspace — full width, large container */}
+      <section className="px-4 pb-12">
+        <div className="mx-auto max-w-6xl">
           <Workspace />
         </div>
+      </section>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
-          {toolCategories.map((c) => (
-            <span
-              key={c.slug}
-              className="border-border bg-background text-muted-foreground inline-flex h-8 items-center rounded-full border px-3 text-xs font-medium"
-            >
-              {c.label}
-            </span>
+      {/* Feature strip */}
+      <section className="border-y border-border bg-card/50 py-4 px-4">
+        <div className="mx-auto max-w-6xl flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+          {features.map(({ icon: Icon, label }) => (
+            <div key={label} className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Icon className="size-4 shrink-0" aria-hidden />
+              {label}
+            </div>
           ))}
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

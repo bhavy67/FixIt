@@ -1,0 +1,17 @@
+{
+  "name": "FixIt",
+  "short_name": "FixIt",
+  "description": "Drop it. Fix it. Done. Local-first file tools.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

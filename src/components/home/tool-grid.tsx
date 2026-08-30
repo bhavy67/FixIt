@@ -1,60 +1,69 @@
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { ArrowRight } from 'lucide-react';
 import { TOOLS_META } from '@/tools/meta';
+import { getToolIcon } from '@/lib/tool-icons';
+import { categoryIconBg, categoryIconColor } from '@/lib/tool-category-styles';
 import { toolCategories } from '@/lib/site-config';
+import { cn } from '@/lib/cn';
 
-const categoryLabel = (slug: string) => toolCategories.find((c) => c.slug === slug)?.label ?? slug;
+const categoryLabel = (slug: string) =>
+  toolCategories.find((c) => c.slug === slug)?.label ?? slug;
+
+// Show first 9 tools
+const POPULAR = TOOLS_META.slice(0, 9);
 
 export function ToolGrid() {
   return (
-    <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
-      <div className="mb-6 flex items-end justify-between">
-        <h2 className="text-lg font-semibold tracking-tight sm:text-xl">Popular</h2>
+    <div>
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Popular
+        </h2>
         <Link
           href="/tools"
-          className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors"
+          className="flex items-center gap-1 text-xs text-primary hover:underline"
         >
-          All tools →
+          All {TOOLS_META.length} tools <ArrowRight className="size-3" />
         </Link>
       </div>
 
-      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {TOOLS_META.map((tool) => (
-          <li key={tool.id}>
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+        {POPULAR.map((tool) => {
+          const Icon = getToolIcon(tool.id, tool.category);
+          return (
             <Link
+              key={tool.id}
               href={`/tools/${tool.slug}`}
-              className="group focus-visible:ring-ring focus-visible:ring-offset-background block h-full rounded-xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+              className="group flex flex-col gap-3 rounded-xl border border-border bg-card p-4
+                transition-all duration-150 hover:shadow-sm hover:border-primary/20"
             >
-              <Card className="group-hover:border-primary/50 h-full gap-3 transition-colors">
-                <CardHeader>
-                  <Badge variant="outline" className="mb-1 w-fit text-xs font-normal">
-                    {categoryLabel(tool.category)}
-                  </Badge>
-                  <CardTitle className="text-base">{tool.name}</CardTitle>
-                  <CardAction>
-                    <ArrowUpRight
-                      className="text-muted-foreground group-hover:text-primary size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                      aria-hidden
-                    />
-                  </CardAction>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>{tool.tagline}</CardDescription>
-                </CardContent>
-              </Card>
+              {/* Icon */}
+              <div
+                className={cn(
+                  'inline-flex size-10 items-center justify-center rounded-xl',
+                  categoryIconBg[tool.category] ?? 'bg-muted',
+                )}
+              >
+                <Icon
+                  className={cn('size-5', categoryIconColor[tool.category] ?? 'text-muted-foreground')}
+                  aria-hidden
+                />
+              </div>
+              {/* Text */}
+              <div className="flex flex-col gap-1 flex-1">
+                <p className="text-sm font-semibold leading-snug">{tool.name}</p>
+                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                  {tool.tagline}
+                </p>
+              </div>
+              {/* Hover arrow */}
+              <div className="flex items-center gap-1 text-primary text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                Open <ArrowRight className="size-3" />
+              </div>
             </Link>
-          </li>
-        ))}
-      </ul>
-    </section>
+          );
+        })}
+      </div>
+    </div>
   );
 }

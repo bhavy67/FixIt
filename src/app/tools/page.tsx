@@ -15,15 +15,14 @@ export const metadata: Metadata = {
 
 export default function ToolsIndexPage() {
   return (
-    <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
-      <header className="mb-10 text-center">
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">All tools</h1>
-        <p className="text-muted-foreground mx-auto mt-3 max-w-lg text-sm sm:text-base">
-          Every FixIt tool runs locally in your browser. Nothing to install, nothing uploaded.
+    <main>
+      <div className="mx-auto max-w-6xl px-4 py-8">
+        <h1 className="text-3xl font-bold tracking-tight mb-1">All tools</h1>
+        <p className="text-muted-foreground text-sm mb-8">
+          {TOOLS_META.length} tools, all running locally in your browser.
         </p>
-      </header>
-
-      <ToolsIndexClient tools={TOOLS_META} categories={toolCategories} />
+        <ToolsIndexClient tools={TOOLS_META} categories={toolCategories} />
+      </div>
     </main>
   );
 }

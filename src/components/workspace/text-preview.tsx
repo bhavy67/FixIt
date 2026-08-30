@@ -5,7 +5,7 @@ import { Copy, Check, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatBytes } from '@/lib/format-bytes';
 
-const MAX_PREVIEW_CHARS = 4000;
+const MAX_PREVIEW_CHARS = 6000;
 
 type Props = {
   blob: Blob;
@@ -84,7 +84,7 @@ export function TextPreview({ blob }: Props) {
           {copied ? 'Copied' : 'Copy'}
         </Button>
       </div>
-      <pre className="bg-muted max-h-64 overflow-auto rounded-lg p-3 font-mono text-xs whitespace-pre-wrap">
+      <pre className="bg-muted max-h-96 overflow-auto rounded-lg p-3 font-mono text-xs whitespace-pre-wrap">
         <code>{display}</code>
       </pre>
       {truncated && (

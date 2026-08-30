@@ -1,21 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { usePreferencesStore } from '@/stores/preferences-store';
 import { TOOLS_META } from '@/tools/meta';
-import { toolCategories } from '@/lib/site-config';
+import { cn } from '@/lib/cn';
 
-const categoryLabel = (slug: string) => toolCategories.find((c) => c.slug === slug)?.label ?? slug;
+const categoryDot: Record<string, string> = {
+  pdf: 'bg-blue-500',
+  'pdf-security': 'bg-violet-500',
+  image: 'bg-amber-500',
+  data: 'bg-emerald-500',
+  text: 'bg-slate-400',
+};
 
 export function RecentTools() {
   const recentIds = usePreferencesStore((s) => s.recentToolIds);
@@ -27,36 +23,30 @@ export function RecentTools() {
   if (recentTools.length === 0) return null;
 
   return (
-    <section className="mx-auto max-w-6xl px-4 pb-8 sm:px-6">
-      <h2 className="mb-4 text-lg font-semibold tracking-tight sm:text-xl">Recently used</h2>
-      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {recentTools.map((tool) => (
-          <li key={tool.id}>
+    <section className="px-4 pb-6 mt-8">
+      <div className="mx-auto max-w-6xl">
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+          Recent
+        </p>
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+          {recentTools.map((tool) => (
             <Link
+              key={tool.id}
               href={`/tools/${tool.slug}`}
-              className="group focus-visible:ring-ring focus-visible:ring-offset-background block h-full rounded-xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+              className="shrink-0 flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2
+                text-xs font-medium hover:border-primary/30 hover:shadow-sm transition-all duration-150"
             >
-              <Card className="group-hover:border-primary/50 h-full gap-3 transition-colors">
-                <CardHeader>
-                  <Badge variant="outline" className="mb-1 w-fit text-xs font-normal">
-                    {categoryLabel(tool.category)}
-                  </Badge>
-                  <CardTitle className="text-base">{tool.name}</CardTitle>
-                  <CardAction>
-                    <ArrowUpRight
-                      className="text-muted-foreground group-hover:text-primary size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                      aria-hidden
-                    />
-                  </CardAction>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>{tool.tagline}</CardDescription>
-                </CardContent>
-              </Card>
+              <span
+                className={cn(
+                  'size-1.5 rounded-full',
+                  categoryDot[tool.category] ?? 'bg-muted-foreground',
+                )}
+              />
+              {tool.name}
             </Link>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }

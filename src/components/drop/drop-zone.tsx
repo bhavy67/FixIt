@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import { MousePointerClick, UploadCloud } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { UploadCloud } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/cn';
 import { useFilesStore } from '@/stores/files-store';
@@ -15,7 +15,6 @@ export function DropZone({ compact = false }: DropZoneProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const dragCounter = useRef(0);
   const [isDragging, setIsDragging] = useState(false);
-  const inputId = useId();
 
   const openPicker = useCallback(() => inputRef.current?.click(), []);
 
@@ -38,6 +37,57 @@ export function DropZone({ compact = false }: DropZoneProps) {
     };
   }, []);
 
+  if (compact) {
+    return (
+      <div
+        onDragEnter={(e) => {
+          e.preventDefault();
+          if (!e.dataTransfer.types.includes('Files')) return;
+          dragCounter.current += 1;
+          setIsDragging(true);
+        }}
+        onDragLeave={(e) => {
+          e.preventDefault();
+          dragCounter.current = Math.max(0, dragCounter.current - 1);
+          if (dragCounter.current === 0) setIsDragging(false);
+        }}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          dragCounter.current = 0;
+          setIsDragging(false);
+          void handleFiles(e.dataTransfer.files);
+        }}
+        className={cn(
+          'border-border rounded-xl border border-dashed p-3 text-center transition-all duration-150',
+          isDragging && 'border-primary bg-primary/5',
+        )}
+        data-testid="drop-zone-compact"
+        data-dragging={isDragging || undefined}
+      >
+        <input
+          ref={inputRef}
+          type="file"
+          multiple
+          className="sr-only"
+          onChange={(e) => {
+            void handleFiles(e.target.files);
+            e.target.value = '';
+          }}
+        />
+        <Button
+          variant="outline"
+          size="sm"
+          type="button"
+          onClick={openPicker}
+          className="w-full text-xs"
+        >
+          + Add more files
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div
       onDragEnter={(e) => {
@@ -58,57 +108,53 @@ export function DropZone({ compact = false }: DropZoneProps) {
         setIsDragging(false);
         void handleFiles(e.dataTransfer.files);
       }}
+      onClick={openPicker}
       className={cn(
-        'border-border bg-card relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed text-center transition-colors',
-        compact ? 'p-5' : 'p-8 sm:p-12',
-        isDragging && 'border-primary bg-primary/5',
+        'w-full min-h-[420px] rounded-2xl border-2 border-dashed border-border',
+        'flex flex-col items-center justify-center gap-6 p-8',
+        'cursor-pointer transition-all duration-200',
+        'hover:border-primary/50 hover:bg-primary/[0.02]',
+        isDragging && 'border-primary bg-primary/5 scale-[1.002]',
       )}
       data-testid="drop-zone"
       data-dragging={isDragging || undefined}
     >
       <input
         ref={inputRef}
-        id={inputId}
         type="file"
         multiple
         className="sr-only"
+        onClick={(e) => e.stopPropagation()}
         onChange={(e) => {
           void handleFiles(e.target.files);
           e.target.value = '';
         }}
       />
-      <UploadCloud
+      <div
         className={cn(
-          'text-muted-foreground mb-3 transition-colors',
-          compact ? 'size-6' : 'size-8',
-          isDragging && 'text-primary',
-        )}
-        aria-hidden
-      />
-      <p
-        className={cn(
-          'font-medium',
-          compact ? 'text-sm' : 'text-sm sm:text-base',
-          isDragging ? 'text-primary' : 'text-foreground',
+          'rounded-2xl bg-muted p-5 transition-transform duration-200',
+          isDragging ? 'scale-110' : '',
         )}
       >
-        {isDragging ? 'Drop them here' : compact ? 'Add more files' : 'Drop files here'}
-      </p>
-      {!compact && <p className="text-muted-foreground my-3 text-xs">or</p>}
-      <Button
-        size={compact ? 'sm' : 'default'}
-        type="button"
-        onClick={openPicker}
-        className={compact ? 'mt-2' : ''}
-      >
-        <MousePointerClick className="size-4" aria-hidden />
+        <UploadCloud
+          className={cn(
+            'size-10 transition-colors duration-200',
+            isDragging ? 'text-primary' : 'text-muted-foreground',
+          )}
+          aria-hidden
+        />
+      </div>
+      <div className="text-center">
+        <p className="text-xl font-semibold">
+          {isDragging ? 'Release to drop' : 'Drop files here'}
+        </p>
+        <p className="text-muted-foreground mt-1.5 text-sm">
+          PDFs · Images · CSVs · HTML · Markdown and more
+        </p>
+      </div>
+      <Button variant="outline" size="sm" tabIndex={-1} type="button">
         Choose files
       </Button>
-      {!compact && (
-        <p className="text-muted-foreground mt-4 max-w-sm text-xs">
-          PDF, images, JSON, CSV, text — inspected locally in your browser.
-        </p>
-      )}
     </div>
   );
 }

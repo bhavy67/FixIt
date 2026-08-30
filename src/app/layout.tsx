@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import { ThemeProvider } from '@/components/layout/theme-provider';
+import { Sidebar } from '@/components/layout/sidebar';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/sonner';
@@ -36,6 +37,7 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  manifest: '/manifest.json',
 };
 
 export const viewport: Viewport = {
@@ -56,22 +58,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${GeistSans.variable} ${GeistMono.variable}`}
     >
       <body suppressHydrationWarning className="bg-background text-foreground min-h-dvh antialiased">
-        <a
-          href="#main"
-          className="bg-primary text-primary-foreground focus-visible:ring-ring sr-only rounded-md px-3 py-2 text-sm font-medium focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3 focus-visible:z-50 focus-visible:ring-2 focus-visible:outline-none"
-        >
-          Skip to content
-        </a>
         <ThemeProvider>
-          <div className="flex min-h-dvh flex-col">
+          <Sidebar />
+          <div className="lg:pl-60">
+            <a
+              href="#main"
+              className="bg-primary text-primary-foreground focus-visible:ring-ring sr-only rounded-md px-3 py-2 text-sm font-medium focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3 focus-visible:z-50 focus-visible:ring-2 focus-visible:outline-none"
+            >
+              Skip to content
+            </a>
             <Header />
-            <div id="main" className="flex-1">
-              {children}
+            <div id="main" className="flex min-h-dvh flex-col">
+              <div className="flex-1">
+                {children}
+              </div>
+              <Footer />
             </div>
-            <Footer />
           </div>
-          <Toaster />
           <CommandPalette />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
