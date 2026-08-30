@@ -71,6 +71,11 @@ function detectKindFromExtension(ext: string): FileKind | null {
       return 'text';
     case 'zip':
       return 'zip';
+    case 'html':
+    case 'htm':
+      return 'text';
+    case 'epub':
+      return 'zip';
     default:
       return null;
   }

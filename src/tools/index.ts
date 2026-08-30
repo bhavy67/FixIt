@@ -26,6 +26,14 @@ import { pdfFlattenTool } from './pdf-flatten/definition';
 import { pdfExtractTextTool } from './pdf-extract-text/definition';
 import { pdfHeadersFootersTool } from './pdf-headers-footers/definition';
 import { pdfToAudioTool } from './pdf-to-audio/definition';
+import { pdfToZipTool } from './pdf-to-zip/definition';
+import { pdfInvertColorsTool } from './pdf-invert-colors/definition';
+import { pdfFormFillTool } from './pdf-form-fill/definition';
+import { markdownToPdfTool } from './markdown-to-pdf/definition';
+import { htmlToPdfTool } from './html-to-pdf/definition';
+import { txtToPdfTool } from './txt-to-pdf/definition';
+import { csvToPdfTool } from './csv-to-pdf/definition';
+import { epubToPdfTool } from './epub-to-pdf/definition';
 
 // Side effect: run once when this module is first imported.
 let registered = false;
@@ -59,6 +67,14 @@ function ensureRegistered(): void {
   registerTool(pdfExtractTextTool);
   registerTool(pdfHeadersFootersTool);
   registerTool(pdfToAudioTool);
+  registerTool(pdfToZipTool);
+  registerTool(pdfInvertColorsTool);
+  registerTool(pdfFormFillTool);
+  registerTool(markdownToPdfTool);
+  registerTool(htmlToPdfTool);
+  registerTool(txtToPdfTool);
+  registerTool(csvToPdfTool);
+  registerTool(epubToPdfTool);
 }
 
 ensureRegistered();

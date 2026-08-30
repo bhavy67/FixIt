@@ -26,6 +26,14 @@ import { meta as pdfFlattenMeta } from './pdf-flatten/meta';
 import { meta as pdfExtractTextMeta } from './pdf-extract-text/meta';
 import { meta as pdfHeadersFootersMeta } from './pdf-headers-footers/meta';
 import { meta as pdfToAudioMeta } from './pdf-to-audio/meta';
+import { meta as pdfToZipMeta } from './pdf-to-zip/meta';
+import { meta as pdfInvertColorsMeta } from './pdf-invert-colors/meta';
+import { meta as pdfFormFillMeta } from './pdf-form-fill/meta';
+import { meta as markdownToPdfMeta } from './markdown-to-pdf/meta';
+import { meta as htmlToPdfMeta } from './html-to-pdf/meta';
+import { meta as txtToPdfMeta } from './txt-to-pdf/meta';
+import { meta as csvToPdfMeta } from './csv-to-pdf/meta';
+import { meta as epubToPdfMeta } from './epub-to-pdf/meta';
 
 /**
  * The canonical list of registered tools' metadata. Safe to import from
@@ -59,6 +67,14 @@ export const TOOLS_META: readonly ToolMeta[] = [
   pdfExtractTextMeta,
   pdfHeadersFootersMeta,
   pdfToAudioMeta,
+  pdfToZipMeta,
+  pdfInvertColorsMeta,
+  pdfFormFillMeta,
+  markdownToPdfMeta,
+  htmlToPdfMeta,
+  txtToPdfMeta,
+  csvToPdfMeta,
+  epubToPdfMeta,
 ];
 
 export function getToolMetaBySlug(slug: string): ToolMeta | undefined {
