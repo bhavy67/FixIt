@@ -13,12 +13,13 @@ export type NavItem = {
 export const navItems: readonly NavItem[] = [{ label: 'Tools', href: '/tools' }];
 
 export type ToolCategory = {
-  slug: 'pdf' | 'image' | 'data' | 'text';
+  slug: 'pdf' | 'image' | 'data' | 'text' | 'pdf-security';
   label: string;
 };
 
 export const toolCategories: readonly ToolCategory[] = [
   { slug: 'pdf', label: 'PDF' },
+  { slug: 'pdf-security', label: 'PDF Security' },
   { slug: 'image', label: 'Images' },
   { slug: 'data', label: 'Data' },
   { slug: 'text', label: 'Text' },

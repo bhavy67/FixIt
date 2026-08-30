@@ -21,6 +21,11 @@ import { meta as pdfPageNumbersMeta } from './pdf-page-numbers/meta';
 import { meta as pdfPageSizeMeta } from './pdf-page-size/meta';
 import { meta as pdfRepairMeta } from './pdf-repair/meta';
 import { meta as pdfCompareMeta } from './pdf-compare/meta';
+import { meta as pdfFingerprintMeta } from './pdf-fingerprint/meta';
+import { meta as pdfFlattenMeta } from './pdf-flatten/meta';
+import { meta as pdfExtractTextMeta } from './pdf-extract-text/meta';
+import { meta as pdfHeadersFootersMeta } from './pdf-headers-footers/meta';
+import { meta as pdfToAudioMeta } from './pdf-to-audio/meta';
 
 /**
  * The canonical list of registered tools' metadata. Safe to import from
@@ -49,6 +54,11 @@ export const TOOLS_META: readonly ToolMeta[] = [
   pdfPageSizeMeta,
   pdfRepairMeta,
   pdfCompareMeta,
+  pdfFingerprintMeta,
+  pdfFlattenMeta,
+  pdfExtractTextMeta,
+  pdfHeadersFootersMeta,
+  pdfToAudioMeta,
 ];
 
 export function getToolMetaBySlug(slug: string): ToolMeta | undefined {

@@ -8,7 +8,7 @@ export interface OptionsFormProps<Options> {
   onChange: (value: Options) => void;
 }
 
-export type ToolCategorySlug = 'pdf' | 'image' | 'data' | 'text';
+export type ToolCategorySlug = 'pdf' | 'image' | 'data' | 'text' | 'pdf-security';
 
 export interface ToolInputSpec {
   accepts: readonly FileKind[];

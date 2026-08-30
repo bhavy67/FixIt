@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatBytes } from '@/lib/format-bytes';
 
@@ -14,16 +14,25 @@ type Props = {
 export function TextPreview({ blob }: Props) {
   const [text, setText] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     void blob.text().then((t) => {
       if (!cancelled) setText(t);
     });
+    speechSynthesis.cancel();
+    setSpeaking(false);
     return () => {
       cancelled = true;
     };
   }, [blob]);
+
+  useEffect(() => {
+    return () => {
+      speechSynthesis.cancel();
+    };
+  }, []);
 
   if (text === null) {
     return (
@@ -42,9 +51,30 @@ export function TextPreview({ blob }: Props) {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleListen = () => {
+    if (speaking) {
+      speechSynthesis.cancel();
+      setSpeaking(false);
+    } else {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.onend = () => setSpeaking(false);
+      utterance.onerror = () => setSpeaking(false);
+      speechSynthesis.speak(utterance);
+      setSpeaking(true);
+    }
+  };
+
   return (
     <div className="border-border bg-card flex flex-col gap-2 rounded-xl border p-3">
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-end gap-1">
+        <Button variant="ghost" size="sm" onClick={handleListen} aria-label={speaking ? 'Stop speaking' : 'Listen to text'}>
+          {speaking ? (
+            <VolumeX className="size-3.5" aria-hidden />
+          ) : (
+            <Volume2 className="size-3.5" aria-hidden />
+          )}
+          {speaking ? 'Stop' : 'Listen'}
+        </Button>
         <Button variant="ghost" size="sm" onClick={handleCopy} aria-label="Copy to clipboard">
           {copied ? (
             <Check className="size-3.5 text-green-500" aria-hidden />

@@ -21,6 +21,11 @@ import { pdfPageNumbersTool } from './pdf-page-numbers/definition';
 import { pdfPageSizeTool } from './pdf-page-size/definition';
 import { pdfRepairTool } from './pdf-repair/definition';
 import { pdfCompareTool } from './pdf-compare/definition';
+import { pdfFingerprintTool } from './pdf-fingerprint/definition';
+import { pdfFlattenTool } from './pdf-flatten/definition';
+import { pdfExtractTextTool } from './pdf-extract-text/definition';
+import { pdfHeadersFootersTool } from './pdf-headers-footers/definition';
+import { pdfToAudioTool } from './pdf-to-audio/definition';
 
 // Side effect: run once when this module is first imported.
 let registered = false;
@@ -49,6 +54,11 @@ function ensureRegistered(): void {
   registerTool(pdfPageSizeTool);
   registerTool(pdfRepairTool);
   registerTool(pdfCompareTool);
+  registerTool(pdfFingerprintTool);
+  registerTool(pdfFlattenTool);
+  registerTool(pdfExtractTextTool);
+  registerTool(pdfHeadersFootersTool);
+  registerTool(pdfToAudioTool);
 }
 
 ensureRegistered();

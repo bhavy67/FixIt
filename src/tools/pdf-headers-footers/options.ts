@@ -1,0 +1,15 @@
+export type Alignment = 'left' | 'center' | 'right';
+
+export interface PdfHeadersFootersOptions {
+  headerText: string;
+  footerText: string;
+  fontSize: number;
+  alignment: Alignment;
+}
+
+export const DEFAULT_OPTIONS: PdfHeadersFootersOptions = {
+  headerText: '',
+  footerText: 'Page {page} of {total}',
+  fontSize: 10,
+  alignment: 'center',
+};
