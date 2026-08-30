@@ -7,7 +7,11 @@ export async function processPdfSign(
   const { files, options, onProgress, signal } = ctx;
 
   if (!options.signatureDataUrl) {
-    throw new Error('No signature drawn. Draw your signature in the pad above first.');
+    throw new Error(
+      options.signMode === 'type'
+        ? 'No signature typed. Enter your name in the Type tab first.'
+        : 'No signature drawn. Draw your signature in the pad first.',
+    );
   }
 
   const file = files[0]!;
@@ -29,22 +33,20 @@ export async function processPdfSign(
   const page = pdfDoc.getPage(pageIndex);
   const { width: pw, height: ph } = page.getSize();
 
-  const sizeMap: Record<typeof options.size, number> = { small: 0.15, medium: 0.25, large: 0.35 };
-  const sigW = pw * sizeMap[options.size];
+  // sigX/sigY are normalized fractions with screen-coords origin (top-left)
+  // PDF origin is bottom-left, so we flip sigY
+  const sigW = options.sigW * pw;
   const sigH = sigW * (pngImage.height / pngImage.width);
-  const margin = pw * 0.05;
+  const x = options.sigX * pw;
+  // Convert: screen top-left (sigY=0) → PDF bottom-left
+  const y = ph - options.sigY * ph - sigH;
 
-  const posMap: Record<typeof options.position, { x: number; y: number }> = {
-    'bottom-left': { x: margin, y: margin },
-    'bottom-center': { x: (pw - sigW) / 2, y: margin },
-    'bottom-right': { x: pw - sigW - margin, y: margin },
-    'top-left': { x: margin, y: ph - sigH - margin },
-    'top-center': { x: (pw - sigW) / 2, y: ph - sigH - margin },
-    'top-right': { x: pw - sigW - margin, y: ph - sigH - margin },
-  };
-
-  const { x, y } = posMap[options.position];
-  page.drawImage(pngImage, { x, y, width: sigW, height: sigH });
+  page.drawImage(pngImage, {
+    x: Math.max(0, x),
+    y: Math.max(0, y),
+    width: sigW,
+    height: sigH,
+  });
 
   onProgress(0.9);
   if (signal.aborted) throw new DOMException('cancelled', 'AbortError');

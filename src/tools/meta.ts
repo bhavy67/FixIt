@@ -38,6 +38,8 @@ import { meta as pdfSignMeta } from './pdf-sign/meta';
 import { meta as pdfCropMeta } from './pdf-crop/meta';
 import { meta as pdfRedactMeta } from './pdf-redact/meta';
 import { meta as pdfOcrMeta } from './pdf-ocr/meta';
+import { meta as pdfEncryptMeta } from './pdf-encrypt/meta';
+import { meta as pdfExtractImagesMeta } from './pdf-extract-images/meta';
 
 /**
  * The canonical list of registered tools' metadata. Safe to import from
@@ -83,6 +85,8 @@ export const TOOLS_META: readonly ToolMeta[] = [
   pdfCropMeta,
   pdfRedactMeta,
   pdfOcrMeta,
+  pdfEncryptMeta,
+  pdfExtractImagesMeta,
 ];
 
 export function getToolMetaBySlug(slug: string): ToolMeta | undefined {

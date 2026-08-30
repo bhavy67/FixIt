@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, LayoutDashboard, Workflow, Camera } from 'lucide-react';
+import { Menu, LayoutDashboard, Wrench, Workflow, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -24,6 +24,7 @@ const GROUPED = toolsByCategory();
 
 const TOP_NAV = [
   { href: '/', icon: LayoutDashboard, label: 'Dashboard', exact: true },
+  { href: '/tools', icon: Wrench, label: 'Tools', exact: false },
   { href: '/workflow', icon: Workflow, label: 'Workflow', exact: false },
   { href: '/scan', icon: Camera, label: 'Scan', exact: false },
 ] as const;
@@ -82,7 +83,7 @@ export function MobileNav() {
           <div className="mx-3 my-3 border-t border-border/60" />
 
           {/* Tools by category */}
-          <div className="px-2 pb-4 space-y-5">
+          <div aria-hidden="true" className="px-2 pb-4 space-y-5">
             {toolCategories.map((cat) => {
               const tools = GROUPED[cat.slug] ?? [];
               if (tools.length === 0) return null;

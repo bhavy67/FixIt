@@ -23,7 +23,7 @@ export function ToolGrid() {
           href="/tools"
           className="flex items-center gap-1 text-xs text-primary hover:underline"
         >
-          All {TOOLS_META.length} tools <ArrowRight className="size-3" />
+          All 40+ tools <ArrowRight className="size-3" />
         </Link>
       </div>
 

@@ -1,178 +1,211 @@
 'use client';
 
-import { useId, useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import type { OptionsFormProps } from '@/core/tool-types';
-import type { PdfSignOptions, SignPosition, SignSize } from './options';
+import type { PdfSignOptions } from './options';
+import { cn } from '@/lib/cn';
 
-const inputCls =
-  'border-input bg-background text-foreground focus-visible:ring-ring h-9 w-full rounded-md border px-3 text-sm shadow-xs transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50';
-const labelCls = 'text-foreground text-xs font-medium';
-const helperCls = 'text-muted-foreground text-xs';
+const COLORS = [
+  { value: '#1a1a1a', label: 'Black' },
+  { value: '#1e40af', label: 'Blue' },
+  { value: '#15803d', label: 'Green' },
+  { value: '#b91c1c', label: 'Red' },
+  { value: '#7c3aed', label: 'Purple' },
+];
+
+function getDrawPoint(e: React.PointerEvent<HTMLCanvasElement>) {
+  const canvas = e.currentTarget;
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return {
+    x: (e.clientX - rect.left) * scaleX,
+    y: (e.clientY - rect.top) * scaleY,
+  };
+}
+
+function renderTypedSignature(text: string, color: string): string {
+  const canvas = document.createElement('canvas');
+  canvas.width = 480;
+  canvas.height = 130;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return '';
+  ctx.font = '62px "Brush Script MT", "Segoe Script", "Bradley Hand ITC", cursive';
+  ctx.fillStyle = color;
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'center';
+  ctx.fillText(text, 240, 68, 460);
+  return canvas.toDataURL('image/png');
+}
 
 export function PdfSignOptionsForm({ value, onChange }: OptionsFormProps<PdfSignOptions>) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const drawCanvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
   const lastPoint = useRef<{ x: number; y: number } | null>(null);
 
-  const pageId = useId();
-  const positionId = useId();
-  const sizeId = useId();
+  const activeColor = value.color ?? '#1a1a1a';
+  const isType = value.signMode === 'type';
 
-  const getCanvasPoint = (canvas: HTMLCanvasElement, e: React.PointerEvent) => {
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    };
-  };
-
-  const draw = (canvas: HTMLCanvasElement, x: number, y: number) => {
-    const ctx = canvas.getContext('2d');
-    if (!ctx || !lastPoint.current) return;
-    ctx.beginPath();
-    ctx.moveTo(lastPoint.current.x, lastPoint.current.y);
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    lastPoint.current = { x, y };
-  };
-
-  const handlePointerDown = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    canvas.setPointerCapture(e.pointerId);
-    const point = getCanvasPoint(canvas, e);
-    isDrawing.current = true;
-    lastPoint.current = point;
-
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.strokeStyle = '#000000';
-      ctx.lineWidth = 2;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-    }
-  }, []);
-
-  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas || !isDrawing.current) return;
-    const point = getCanvasPoint(canvas, e);
-    draw(canvas, point.x, point.y);
-  }, []);
-
-  const handlePointerUp = useCallback(
+  // ── Draw handlers ─────────────────────────────────────────────────────────
+  const handleDrawDown = useCallback(
     (e: React.PointerEvent<HTMLCanvasElement>) => {
-      const canvas = canvasRef.current;
-      if (!canvas || !isDrawing.current) return;
-      const point = getCanvasPoint(canvas, e);
-      draw(canvas, point.x, point.y);
-      isDrawing.current = false;
-      lastPoint.current = null;
-      const dataUrl = canvas.toDataURL('image/png');
-      onChange({ ...value, signatureDataUrl: dataUrl });
+      const canvas = drawCanvasRef.current;
+      if (!canvas) return;
+      canvas.setPointerCapture(e.pointerId);
+      isDrawing.current = true;
+      lastPoint.current = getDrawPoint(e);
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.strokeStyle = activeColor;
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+      }
     },
-    [value, onChange],
+    [activeColor],
   );
 
-  const handlePointerLeave = useCallback(
-    (_e: React.PointerEvent<HTMLCanvasElement>) => {
-      const canvas = canvasRef.current;
-      if (!canvas || !isDrawing.current) return;
+  const handleDrawMove = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
+    if (!isDrawing.current || !lastPoint.current) return;
+    const canvas = drawCanvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!ctx) return;
+    const pt = getDrawPoint(e);
+    ctx.beginPath();
+    ctx.moveTo(lastPoint.current.x, lastPoint.current.y);
+    ctx.lineTo(pt.x, pt.y);
+    ctx.stroke();
+    lastPoint.current = pt;
+  }, []);
+
+  const commitDraw = useCallback(
+    (e: React.PointerEvent<HTMLCanvasElement>) => {
+      if (!isDrawing.current) return;
+      handleDrawMove(e);
       isDrawing.current = false;
       lastPoint.current = null;
-      const dataUrl = canvas.toDataURL('image/png');
+      const dataUrl = drawCanvasRef.current?.toDataURL('image/png') ?? '';
       onChange({ ...value, signatureDataUrl: dataUrl });
     },
-    [value, onChange],
+    [value, onChange, handleDrawMove],
   );
 
   const handleClear = useCallback(() => {
-    const canvas = canvasRef.current;
+    const canvas = drawCanvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+    canvas.getContext('2d')?.clearRect(0, 0, canvas.width, canvas.height);
     onChange({ ...value, signatureDataUrl: '' });
   }, [value, onChange]);
 
+  const applyColor = (c: string) => {
+    if (isType && value.typedText) {
+      onChange({ ...value, color: c, signatureDataUrl: renderTypedSignature(value.typedText, c) });
+    } else {
+      onChange({ ...value, color: c });
+    }
+  };
+
   return (
-    <div className="border-border bg-card flex flex-col gap-4 rounded-xl border p-4">
-      <div className="flex flex-col gap-1.5">
-        <div className="flex items-center justify-between">
-          <span className={labelCls}>Signature</span>
+    <div className="flex flex-col gap-4">
+      {/* Mode tabs */}
+      <div className="flex rounded-lg border border-border overflow-hidden text-xs font-medium">
+        {(['draw', 'type'] as const).map((mode) => (
           <button
+            key={mode}
             type="button"
-            onClick={handleClear}
-            className="text-muted-foreground hover:text-foreground text-xs underline underline-offset-2 transition-colors"
+            onClick={() => onChange({ ...value, signMode: mode, signatureDataUrl: '', typedText: '' })}
+            className={cn(
+              'flex-1 py-2 transition-colors capitalize',
+              value.signMode === mode
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground bg-card',
+            )}
           >
-            Clear
+            {mode}
           </button>
-        </div>
-        <canvas
-          ref={canvasRef}
-          width={380}
-          height={120}
-          className="rounded-md border border-dashed border-input bg-white"
-          style={{ touchAction: 'none', cursor: 'crosshair' }}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerLeave={handlePointerLeave}
-        />
-        <p className={helperCls}>
-          Draw your signature in the box above, then adjust placement options.
-        </p>
+        ))}
       </div>
 
+      {/* Signature input */}
+      {isType ? (
+        <div className="flex flex-col gap-2">
+          <input
+            type="text"
+            placeholder="Type your name…"
+            value={value.typedText ?? ''}
+            onChange={(e) => {
+              const text = e.target.value;
+              const dataUrl = text ? renderTypedSignature(text, activeColor) : '';
+              onChange({ ...value, typedText: text, signatureDataUrl: dataUrl });
+            }}
+            className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          />
+          {value.typedText && (
+            <div
+              className="rounded-md border border-dashed border-input bg-white min-h-[56px] flex items-center justify-center overflow-hidden px-3"
+              style={{
+                fontFamily: '"Brush Script MT","Segoe Script","Bradley Hand ITC",cursive',
+                fontSize: 36,
+                color: activeColor,
+                lineHeight: 1.2,
+              }}
+            >
+              {value.typedText}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-foreground">Draw signature</span>
+            <button
+              type="button"
+              onClick={handleClear}
+              className="text-xs underline underline-offset-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            >
+              Clear
+            </button>
+          </div>
+          <canvas
+            ref={drawCanvasRef}
+            width={480}
+            height={130}
+            className="rounded-md border border-dashed border-input bg-white w-full"
+            style={{ touchAction: 'none', cursor: 'crosshair', height: 100 }}
+            onPointerDown={handleDrawDown}
+            onPointerMove={handleDrawMove}
+            onPointerUp={commitDraw}
+            onPointerLeave={commitDraw}
+          />
+        </div>
+      )}
+
+      {/* Ink color */}
       <div className="flex flex-col gap-1.5">
-        <label htmlFor={pageId} className={labelCls}>
-          Page
-        </label>
-        <input
-          id={pageId}
-          type="number"
-          min={1}
-          value={value.page}
-          onChange={(e) => onChange({ ...value, page: Math.max(1, Number(e.target.value)) })}
-          className={inputCls}
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={positionId} className={labelCls}>
-            Position
-          </label>
-          <select
-            id={positionId}
-            value={value.position}
-            onChange={(e) => onChange({ ...value, position: e.target.value as SignPosition })}
-            className={inputCls}
-          >
-            <option value="bottom-left">Bottom Left</option>
-            <option value="bottom-center">Bottom Center</option>
-            <option value="bottom-right">Bottom Right</option>
-            <option value="top-left">Top Left</option>
-            <option value="top-center">Top Center</option>
-            <option value="top-right">Top Right</option>
-          </select>
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={sizeId} className={labelCls}>
-            Size
-          </label>
-          <select
-            id={sizeId}
-            value={value.size}
-            onChange={(e) => onChange({ ...value, size: e.target.value as SignSize })}
-            className={inputCls}
-          >
-            <option value="small">Small</option>
-            <option value="medium">Medium</option>
-            <option value="large">Large</option>
-          </select>
+        <span className="text-xs font-medium text-foreground">Ink color</span>
+        <div className="flex items-center gap-2.5">
+          {COLORS.map(({ value: c, label }) => (
+            <button
+              key={c}
+              type="button"
+              title={label}
+              onClick={() => applyColor(c)}
+              className={cn(
+                'size-6 rounded-full border-2 transition-all shrink-0 cursor-pointer',
+                activeColor === c
+                  ? 'border-foreground scale-110'
+                  : 'border-transparent hover:border-muted-foreground',
+              )}
+              style={{ backgroundColor: c }}
+            />
+          ))}
+          <input
+            type="color"
+            value={activeColor}
+            onChange={(e) => applyColor(e.target.value)}
+            className="size-6 rounded-full cursor-pointer p-0 border border-border bg-transparent overflow-hidden"
+            title="Custom color"
+          />
         </div>
       </div>
     </div>

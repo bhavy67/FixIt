@@ -10,6 +10,7 @@ import {
   Download,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { PrivacyTagline } from '@/components/common/privacy-tagline';
 import { Workspace } from '@/components/drop/workspace';
 import { TOOLS_META, getToolMetaBySlug } from '@/tools/meta';
 import { toolCategories } from '@/lib/site-config';
@@ -90,9 +91,9 @@ export default async function ToolPage({ params }: { params: Promise<Params> }) 
         </Link>
 
         <header className="mt-6 text-center">
-          <Badge variant="secondary" className="mb-3 rounded-full font-medium">
-            <ShieldCheck className="size-3" aria-hidden />
-            Local &middot; nothing uploaded
+          <Badge variant="secondary" className="mb-3 rounded-full font-medium text-sm px-3 py-1">
+            <ShieldCheck className="size-3 shrink-0" aria-hidden />
+            <PrivacyTagline />
           </Badge>
           <p className="text-muted-foreground mb-2 text-[10px] font-medium tracking-wider uppercase">
             {category}

@@ -34,6 +34,8 @@ import {
   Stamp,
   FileType,
   Contrast,
+  Lock,
+  ImageDown,
 } from 'lucide-react';
 
 const TOOL_ICONS: Record<string, LucideIcon> = {
@@ -81,6 +83,8 @@ const TOOL_ICONS: Record<string, LucideIcon> = {
   'pdf-sign': PenTool,
   'pdf-crop': Crop,
   'pdf-redact': EyeOff,
+  'pdf-encrypt': Lock,
+  'pdf-extract-images': ImageDown,
 
   // Conversion → PDF
   'markdown-to-pdf': FileCode,

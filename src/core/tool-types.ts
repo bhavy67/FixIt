@@ -58,5 +58,7 @@ export interface ToolMeta {
 export interface ToolDefinition<Options = unknown> extends ToolMeta {
   defaultOptions?: Options;
   OptionsForm?: ComponentType<OptionsFormProps<Options>>;
+  /** Replaces the default FilePreview in the right pane while configuring. */
+  RightPanel?: ComponentType<OptionsFormProps<Options>>;
   process: (ctx: ProcessingContext<Options>) => Promise<ProcessingResult>;
 }

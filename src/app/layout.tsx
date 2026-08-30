@@ -59,7 +59,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body suppressHydrationWarning className="bg-background text-foreground min-h-dvh antialiased">
         <ThemeProvider>
-          <Sidebar />
           <div className="lg:pl-60">
             <a
               href="#main"
@@ -75,6 +74,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Footer />
             </div>
           </div>
+          <Sidebar />
           <CommandPalette />
           <Toaster />
         </ThemeProvider>

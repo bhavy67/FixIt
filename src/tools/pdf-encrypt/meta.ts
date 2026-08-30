@@ -2,11 +2,11 @@ import type { ToolMeta } from '@/core/tool-types';
 
 export const meta: ToolMeta = {
   id: 'pdf-encrypt',
-  slug: 'encrypt-pdf',
+  slug: 'pdf-encrypt',
   name: 'Encrypt PDF',
-  tagline: 'Password-protect a PDF so only authorised readers can open it.',
+  tagline: 'Password-protect your PDF — recipients must enter the password to open it',
   category: 'pdf-security',
-  input: { accepts: ['pdf'], minFiles: 1, maxFiles: 1 },
+  input: { accepts: ['pdf'], minFiles: 1, maxFiles: 10 },
   output: { kind: 'pdf' },
-  mode: 'worker',
+  mode: 'local',
 };

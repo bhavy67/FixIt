@@ -190,10 +190,11 @@ type LeftConfigureProps = {
   onRemoveFile: (id: string) => void;
   onBack: () => void;
   onRun: (opts: unknown) => void;
+  options: unknown;
+  setOptions: (opts: unknown) => void;
 };
 
-function LeftConfigure({ tool, files, onRemoveFile, onBack, onRun }: LeftConfigureProps) {
-  const [options, setOptions] = useState<unknown>(() => tool.defaultOptions);
+function LeftConfigure({ tool, files, onRemoveFile, onBack, onRun, options, setOptions }: LeftConfigureProps) {
   const OptionsForm = tool.OptionsForm;
 
   return (
@@ -430,7 +431,13 @@ export function Workspace({ presetToolId }: WorkspaceProps = {}) {
   );
 
   const [selectedTool, setSelectedTool] = useState<ToolDefinition<unknown> | null>(presetTool);
+  const [options, setOptions] = useState<unknown>(() => presetTool?.defaultOptions ?? null);
   const [lastOptions, setLastOptions] = useState<unknown>(null);
+
+  const selectTool = useCallback((tool: ToolDefinition<unknown> | null) => {
+    setSelectedTool(tool);
+    setOptions(tool?.defaultOptions ?? null);
+  }, []);
 
   // A preset tool only counts as "selected" if the current files actually match it.
   const matchesPreset = useMemo(() => {
@@ -472,9 +479,9 @@ export function Workspace({ presetToolId }: WorkspaceProps = {}) {
   const startOver = useCallback(() => {
     resetJob();
     clearFiles();
-    setSelectedTool(presetTool);
+    selectTool(presetTool);
     setLastOptions(null);
-  }, [resetJob, clearFiles, presetTool]);
+  }, [resetJob, clearFiles, presetTool, selectTool]);
 
   const retry = useCallback(() => {
     if (!selectedTool) {
@@ -523,8 +530,10 @@ export function Workspace({ presetToolId }: WorkspaceProps = {}) {
             tool={effectiveTool}
             files={files}
             onRemoveFile={removeFile}
-            onBack={() => setSelectedTool(null)}
+            onBack={() => selectTool(null)}
             onRun={(opts) => void runSelected(effectiveTool, opts)}
+            options={options}
+            setOptions={setOptions}
           />
         ) : (
           <LeftIdleFiles files={files} onRemoveFile={removeFile} />
@@ -542,9 +551,13 @@ export function Workspace({ presetToolId }: WorkspaceProps = {}) {
         ) : status === 'error' ? (
           <RightError message={errorMessage} onRetry={retry} onReset={startOver} />
         ) : effectiveTool ? (
-          <FilePreview files={files} />
+          effectiveTool.RightPanel ? (
+            <effectiveTool.RightPanel value={options} onChange={setOptions} />
+          ) : (
+            <FilePreview files={files} />
+          )
         ) : (
-          <ToolPicker onPick={(tool) => setSelectedTool(tool)} />
+          <ToolPicker onPick={(tool) => selectTool(tool)} />
         )}
       </div>
     </div>
