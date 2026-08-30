@@ -3,7 +3,7 @@ import { TOOLS_META } from '@/tools/meta';
 import { WorkflowClient } from './_components/workflow-client';
 
 export const metadata: Metadata = {
-  title: 'Workflow Builder — FixIt',
+  title: 'Workflow Builder — Fixit',
   description: 'Chain multiple file tools together into a single automated workflow.',
 };
 

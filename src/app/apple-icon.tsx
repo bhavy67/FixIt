@@ -8,7 +8,7 @@ export default function AppleIcon() {
     (
       <div
         style={{
-          background: '#2563eb',
+          background: 'linear-gradient(135deg, #8b5cf6, #c026d3)',
           width: '100%',
           height: '100%',
           display: 'flex',
@@ -17,14 +17,13 @@ export default function AppleIcon() {
           borderRadius: '40px',
         }}
       >
-        <svg width="112" height="112" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M8 4h8l-4 6 4 10H8l4-10-4-6z"
-            fill="white"
-            stroke="white"
-            strokeWidth="1.5"
-            strokeLinejoin="round"
-          />
+        <svg width="108" height="108" viewBox="0 0 22 22" fill="none">
+          {/* F stem */}
+          <rect x="3" y="2" width="3.2" height="18" rx="1.6" fill="white" />
+          {/* F top bar */}
+          <rect x="3" y="2" width="14" height="3.2" rx="1.6" fill="white" />
+          {/* F crossbar — rising diagonal */}
+          <path d="M 3 14.5 L 17 10" stroke="white" strokeWidth="3" strokeLinecap="round" />
         </svg>
       </div>
     ),

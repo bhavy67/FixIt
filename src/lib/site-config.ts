@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: 'FixIt',
+  name: 'Fixit',
   tagline: 'Drop it. Fix it. Done.',
   description:
     'A local-first browser utility for annoying file operations. Nothing to install, nothing uploaded — everything happens on your device.',

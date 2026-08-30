@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     title: tool.name,
     description: `${tool.tagline} Runs locally in your browser — no upload, no signup.`,
     openGraph: {
-      title: `${tool.name} · FixIt`,
+      title: `${tool.name} · Fixit`,
       description: tool.tagline,
       type: 'website',
     },

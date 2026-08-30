@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { ScanClient } from './_components/scan-client';
 
 export const metadata: Metadata = {
-  title: 'Scan Document — FixIt',
+  title: 'Scan Document — Fixit',
   description: 'Use your camera to scan documents and save them as a PDF.',
 };
 

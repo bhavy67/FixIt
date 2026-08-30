@@ -5,9 +5,9 @@ import { ToolsIndexClient } from '@/components/tools/tools-index-client';
 
 export const metadata: Metadata = {
   title: 'All tools',
-  description: `Every FixIt tool. ${TOOLS_META.length} local-first browser utilities — nothing uploaded, nothing installed.`,
+  description: `Every Fixit tool. ${TOOLS_META.length} local-first browser utilities — nothing uploaded, nothing installed.`,
   openGraph: {
-    title: 'All tools · FixIt',
+    title: 'All tools · Fixit',
     description: 'Local-first browser utilities for annoying file operations.',
     type: 'website',
   },

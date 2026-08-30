@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Workflow, Camera } from 'lucide-react';
+import { LayoutDashboard, Workflow, Camera, Moon, Sun } from 'lucide-react';
+import { BrandMark } from '@/components/common/brand-mark';
 import { CommandPaletteTrigger } from '@/components/tools/command-palette';
-import { ThemeToggle } from './theme-toggle';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/cn';
 import { toolsByCategory } from '@/tools/meta';
 import { toolCategories } from '@/lib/site-config';
@@ -19,20 +21,38 @@ const TOP_NAV = [
   { href: '/scan', icon: Camera, label: 'Scan', exact: false },
 ] as const;
 
+function ThemeRow() {
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const isDark = mounted && resolvedTheme === 'dark';
+
+  return (
+    <button
+      type="button"
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors duration-150 cursor-pointer"
+    >
+      {mounted ? (
+        isDark ? <Sun className="size-[15px] shrink-0" aria-hidden /> : <Moon className="size-[15px] shrink-0" aria-hidden />
+      ) : (
+        <div className="size-[15px] shrink-0" />
+      )}
+      {mounted ? (isDark ? 'Light mode' : 'Dark mode') : 'Toggle theme'}
+    </button>
+  );
+}
+
 export function Sidebar() {
   const pathname = usePathname();
 
   return (
     <aside className="hidden lg:flex flex-col fixed inset-y-0 left-0 w-60 border-r border-border bg-card z-30">
       {/* Logo */}
-      <div className="px-4 py-4 shrink-0">
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="size-8 rounded-xl bg-primary flex items-center justify-center shrink-0">
-            <span className="text-primary-foreground text-sm font-bold select-none">F</span>
-          </div>
-          <span className="text-sm font-semibold group-hover:text-primary transition-colors duration-150">
-            FixIt
-          </span>
+      <div className="px-4 py-5 shrink-0">
+        <Link href="/" className="inline-flex">
+          <BrandMark size="md" />
         </Link>
       </div>
 
@@ -118,9 +138,9 @@ export function Sidebar() {
         </div>
       </nav>
 
-      {/* Bottom */}
-      <div className="px-4 py-3 border-t border-border shrink-0">
-        <ThemeToggle />
+      {/* Bottom — theme toggle as a labelled nav row */}
+      <div className="px-2 py-2 border-t border-border shrink-0">
+        <ThemeRow />
       </div>
     </aside>
   );

@@ -52,7 +52,7 @@ export function InstallPrompt() {
         <Download className="size-4 text-primary" aria-hidden />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold">Install FixIt</p>
+        <p className="text-sm font-semibold">Install Fixit</p>
         <p className="text-xs text-muted-foreground">Work offline &amp; faster access</p>
       </div>
       <Button size="sm" onClick={handleInstall}>
