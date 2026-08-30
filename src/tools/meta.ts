@@ -16,6 +16,11 @@ import { meta as pdfToWebpMeta } from './pdf-to-webp/meta';
 import { meta as jpgToPdfMeta } from './jpg-to-pdf/meta';
 import { meta as pngToPdfMeta } from './png-to-pdf/meta';
 import { meta as imagesToPdfMeta } from './images-to-pdf/meta';
+import { meta as pdfWatermarkMeta } from './pdf-watermark/meta';
+import { meta as pdfPageNumbersMeta } from './pdf-page-numbers/meta';
+import { meta as pdfPageSizeMeta } from './pdf-page-size/meta';
+import { meta as pdfRepairMeta } from './pdf-repair/meta';
+import { meta as pdfCompareMeta } from './pdf-compare/meta';
 
 /**
  * The canonical list of registered tools' metadata. Safe to import from
@@ -39,6 +44,11 @@ export const TOOLS_META: readonly ToolMeta[] = [
   jpgToPdfMeta,
   pngToPdfMeta,
   imagesToPdfMeta,
+  pdfWatermarkMeta,
+  pdfPageNumbersMeta,
+  pdfPageSizeMeta,
+  pdfRepairMeta,
+  pdfCompareMeta,
 ];
 
 export function getToolMetaBySlug(slug: string): ToolMeta | undefined {

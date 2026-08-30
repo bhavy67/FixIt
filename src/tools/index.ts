@@ -16,6 +16,11 @@ import { pdfToWebpTool } from './pdf-to-webp/definition';
 import { jpgToPdfTool } from './jpg-to-pdf/definition';
 import { pngToPdfTool } from './png-to-pdf/definition';
 import { imagesToPdfTool } from './images-to-pdf/definition';
+import { pdfWatermarkTool } from './pdf-watermark/definition';
+import { pdfPageNumbersTool } from './pdf-page-numbers/definition';
+import { pdfPageSizeTool } from './pdf-page-size/definition';
+import { pdfRepairTool } from './pdf-repair/definition';
+import { pdfCompareTool } from './pdf-compare/definition';
 
 // Side effect: run once when this module is first imported.
 let registered = false;
@@ -39,6 +44,11 @@ function ensureRegistered(): void {
   registerTool(jpgToPdfTool);
   registerTool(pngToPdfTool);
   registerTool(imagesToPdfTool);
+  registerTool(pdfWatermarkTool);
+  registerTool(pdfPageNumbersTool);
+  registerTool(pdfPageSizeTool);
+  registerTool(pdfRepairTool);
+  registerTool(pdfCompareTool);
 }
 
 ensureRegistered();
