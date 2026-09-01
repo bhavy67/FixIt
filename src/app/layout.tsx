@@ -7,6 +7,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/sonner';
 import { CommandPalette } from '@/components/tools/command-palette';
+import { ServiceWorkerRegister } from '@/components/pwa/service-worker-register';
 import { siteConfig } from '@/lib/site-config';
 import '../styles/globals.css';
 
@@ -77,6 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Sidebar />
           <CommandPalette />
           <Toaster />
+          <ServiceWorkerRegister />
         </ThemeProvider>
       </body>
     </html>
