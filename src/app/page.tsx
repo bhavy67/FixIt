@@ -6,12 +6,8 @@ import { InstallPrompt } from '@/components/home/install-prompt';
 export default function HomePage() {
   return (
     <main>
+      <InstallPrompt />
       <Hero />
-      <section className="px-4">
-        <div className="mx-auto max-w-6xl">
-          <InstallPrompt />
-        </div>
-      </section>
       <RecentTools />
       <section className="px-4 pb-16">
         <div className="mx-auto max-w-6xl">

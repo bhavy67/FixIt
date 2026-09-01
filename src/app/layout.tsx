@@ -8,6 +8,7 @@ import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/sonner';
 import { CommandPalette } from '@/components/tools/command-palette';
 import { ServiceWorkerRegister } from '@/components/pwa/service-worker-register';
+import { PwaListener } from '@/components/pwa/pwa-listener';
 import { siteConfig } from '@/lib/site-config';
 import '../styles/globals.css';
 
@@ -79,6 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <CommandPalette />
           <Toaster />
           <ServiceWorkerRegister />
+          <PwaListener />
         </ThemeProvider>
       </body>
     </html>

@@ -12,6 +12,7 @@ import { toolsByCategory } from '@/tools/meta';
 import { toolCategories } from '@/lib/site-config';
 import { getToolIcon } from '@/lib/tool-icons';
 import { categoryDot } from '@/lib/tool-category-styles';
+import { InstallHeaderButton } from '@/components/pwa/install-header-button';
 
 const GROUPED = toolsByCategory();
 
@@ -139,8 +140,9 @@ export function Sidebar() {
         </div>
       </nav>
 
-      {/* Bottom — theme toggle as a labelled nav row */}
-      <div className="px-2 py-2 border-t border-border shrink-0">
+      {/* Bottom — install + theme toggle */}
+      <div className="px-2 py-2 border-t border-border shrink-0 flex flex-col gap-0.5">
+        <InstallHeaderButton variant="row" />
         <ThemeRow />
       </div>
     </aside>

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { MobileNav } from './mobile-nav';
 import { ThemeToggle } from './theme-toggle';
 import { BrandMark } from '@/components/common/brand-mark';
+import { InstallHeaderButton } from '@/components/pwa/install-header-button';
 
 export function Header() {
   return (
@@ -10,6 +11,7 @@ export function Header() {
         <BrandMark size="sm" />
       </Link>
       <div className="flex items-center gap-1">
+        <InstallHeaderButton />
         <ThemeToggle />
         <MobileNav />
       </div>
