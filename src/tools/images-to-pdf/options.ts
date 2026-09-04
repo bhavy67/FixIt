@@ -1,3 +1,5 @@
-export type ImagesToPdfOptions = Record<string, never>;
+import { DEFAULT_IMAGE_TO_PDF_OPTIONS, type ImageToPdfOptions } from '@/core/image-to-pdf';
 
-export const DEFAULT_OPTIONS: ImagesToPdfOptions = {};
+export type ImagesToPdfOptions = ImageToPdfOptions;
+
+export const DEFAULT_OPTIONS: ImagesToPdfOptions = { ...DEFAULT_IMAGE_TO_PDF_OPTIONS };

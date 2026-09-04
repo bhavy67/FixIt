@@ -94,7 +94,10 @@ export function PdfCropOptionsForm({ value, onChange }: OptionsFormProps<PdfCrop
         </div>
       </div>
 
-      <p className={helperCls}>Margins are removed from all pages.</p>
+      <p className={helperCls}>
+        Sets the MediaBox on every page — the cropped region is what viewers, print
+        drivers, and downstream tools will see.
+      </p>
     </div>
   );
 }

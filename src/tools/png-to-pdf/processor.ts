@@ -6,7 +6,7 @@ import type { ImageToPdfWorkerInput, ImageToPdfWorkerResult } from './worker-typ
 export async function processPngToPdf(
   ctx: ProcessingContext<PngToPdfOptions>,
 ): Promise<ProcessingResult> {
-  const { files, signal, onProgress } = ctx;
+  const { files, options, signal, onProgress } = ctx;
 
   onProgress(0.05);
   const buffers: ArrayBuffer[] = [];
@@ -15,11 +15,11 @@ export async function processPngToPdf(
   for (let i = 0; i < files.length; i++) {
     buffers.push(await files[i]!.file.arrayBuffer());
     mimes.push(files[i]!.mime);
-    onProgress(0.05 + (i + 1) / files.length * 0.25);
+    onProgress(0.05 + ((i + 1) / files.length) * 0.25);
   }
 
   const worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
-  const input: ImageToPdfWorkerInput = { buffers, mimes };
+  const input: ImageToPdfWorkerInput = { buffers, mimes, options };
 
   const { bytes } = await runInWorker<ImageToPdfWorkerResult>({
     worker,

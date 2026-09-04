@@ -7,6 +7,7 @@ import { FILTER_LABELS, type ColorFilter, type PdfInvertColorsOptions } from './
 const inputCls =
   'border-input bg-background text-foreground focus-visible:ring-ring h-9 w-full rounded-md border px-3 text-sm shadow-xs transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50';
 const labelCls = 'text-foreground text-xs font-medium';
+const helperCls = 'text-muted-foreground text-xs';
 
 export function PdfInvertColorsOptionsForm({
   value,
@@ -32,6 +33,11 @@ export function PdfInvertColorsOptionsForm({
             </option>
           ))}
         </select>
+        <p className={helperCls}>
+          {value.filter === 'invert'
+            ? 'Uses a blend-mode overlay — text stays selectable and vector graphics stay sharp.'
+            : 'Rasterizes each page — text becomes part of the image (no longer selectable).'}
+        </p>
       </div>
     </div>
   );
