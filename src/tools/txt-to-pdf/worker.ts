@@ -32,15 +32,29 @@ ctx.addEventListener('message', async (e: MessageEvent<TxtToPdfWorkerInput>) => 
     let page = doc.addPage([PAGE_W, PAGE_H]);
     let y = PAGE_H - MARGIN;
 
-    const lines = text.split('\n');
+    // Normalize CRLF and split.
+    const lines = text.replace(/\r\n/g, '\n').split('\n');
     const totalLines = lines.length;
     let processed = 0;
 
     for (const rawLine of lines) {
-      // word-wrap
+      // word-wrap with character-level fallback for words longer than availW.
       const words = rawLine === '' ? [''] : rawLine.split(' ');
       let cur = '';
       const wrapped: string[] = [];
+
+      const pushChunkedWord = (w: string): void => {
+        let chunk = '';
+        for (const ch of w) {
+          if (font.widthOfTextAtSize(chunk + ch, fontSize) > availW && chunk) {
+            wrapped.push(chunk);
+            chunk = ch;
+          } else {
+            chunk += ch;
+          }
+        }
+        cur = chunk;
+      };
 
       for (const w of words) {
         const test = cur ? `${cur} ${w}` : w;
@@ -48,7 +62,11 @@ ctx.addEventListener('message', async (e: MessageEvent<TxtToPdfWorkerInput>) => 
           cur = test;
         } else {
           if (cur) wrapped.push(cur);
-          cur = w;
+          if (font.widthOfTextAtSize(w, fontSize) > availW) {
+            pushChunkedWord(w);
+          } else {
+            cur = w;
+          }
         }
       }
       wrapped.push(cur);
