@@ -17,17 +17,32 @@ function post(
 
 ctx.addEventListener('message', async (e: MessageEvent<PdfFlattenWorkerInput>) => {
   try {
-    const { buffer } = e.data;
-    const { PDFDocument } = await import('pdf-lib');
+    const { buffer, options } = e.data;
+    const { PDFDocument, PDFName } = await import('pdf-lib');
 
-    const doc = await PDFDocument.load(buffer, { ignoreEncryption: true, throwOnInvalidObject: false });
-    try {
-      doc.getForm().flatten();
-    } catch {
-      // no form — ignore
+    const doc = await PDFDocument.load(buffer, {
+      ignoreEncryption: true,
+      throwOnInvalidObject: false,
+    });
+
+    if (options.flattenForms) {
+      try {
+        doc.getForm().flatten();
+      } catch {
+        // No form — ignore.
+      }
     }
-    const bytes = await doc.save();
 
+    if (options.removeAnnotations) {
+      // Delete /Annots on every page — strips highlights, sticky notes,
+      // freetext boxes, and any other markup annotations. Form-field
+      // annotations already handled above by flatten() (which removes them).
+      for (const page of doc.getPages()) {
+        page.node.delete(PDFName.of('Annots'));
+      }
+    }
+
+    const bytes = await doc.save();
     post({ type: 'result', value: { bytes } }, [bytes.buffer as ArrayBuffer]);
   } catch (err) {
     post({ type: 'error', message: err instanceof Error ? err.message : String(err) });

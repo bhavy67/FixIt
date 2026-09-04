@@ -15,7 +15,7 @@ function post(message: WorkerMessage<PdfCompressWorkerResult>, transfer?: Transf
 ctx.addEventListener('message', async (e: MessageEvent<PdfCompressWorkerInput>) => {
   try {
     const { buffer, stripMetadata } = e.data;
-    const { PDFDocument } = await import('pdf-lib');
+    const { PDFDocument, PDFName } = await import('pdf-lib');
 
     const doc = await PDFDocument.load(buffer, { ignoreEncryption: true });
 
@@ -26,6 +26,13 @@ ctx.addEventListener('message', async (e: MessageEvent<PdfCompressWorkerInput>) 
       doc.setKeywords([]);
       doc.setCreator('');
       doc.setProducer('');
+      doc.catalog.delete(PDFName.of('Metadata'));
+      doc.catalog.delete(PDFName.of('PieceInfo'));
+      for (const page of doc.getPages()) {
+        page.node.delete(PDFName.of('Thumb'));
+        page.node.delete(PDFName.of('PieceInfo'));
+        page.node.delete(PDFName.of('Metadata'));
+      }
     }
 
     post({ type: 'progress', value: 0.8 });

@@ -1,6 +1,13 @@
+export type PdfFormFillMode = 'detect' | 'fill';
+
 export interface PdfFormFillOptions {
-  fields: string; // "fieldName: value\nanotherField: value2"
+  mode: PdfFormFillMode;
+  fields: string;
   flatten: boolean;
 }
 
-export const DEFAULT_OPTIONS: PdfFormFillOptions = { fields: '', flatten: true };
+export const DEFAULT_OPTIONS: PdfFormFillOptions = {
+  mode: 'fill',
+  fields: '',
+  flatten: true,
+};

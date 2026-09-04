@@ -1,9 +1,10 @@
+import type { PdfFormFillOptions } from './options';
+
 export interface PdfFormFillWorkerInput {
   buffer: ArrayBuffer;
-  fields: string;
-  flatten: boolean;
+  options: PdfFormFillOptions;
 }
 
-export interface PdfFormFillWorkerResult {
-  bytes: Uint8Array;
-}
+export type PdfFormFillWorkerResult =
+  | { kind: 'json'; json: string }
+  | { kind: 'pdf'; bytes: Uint8Array; warnings: string[] };
