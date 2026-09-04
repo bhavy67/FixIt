@@ -18,11 +18,27 @@ function post(
 ctx.addEventListener('message', async (e: MessageEvent<PdfEncryptWorkerInput>) => {
   try {
     const { buffer, userPassword, ownerPassword } = e.data;
-    const { PDFDocument } = await import('pdf-lib');
+    const { PDFDocument } = await import('@cantoo/pdf-lib');
 
-    const doc = await PDFDocument.load(buffer, { ignoreEncryption: true, throwOnInvalidObject: false });
-    // @ts-expect-error pdf-lib types don't expose encrypt() but the spec includes it
-    await doc.encrypt({ userPassword, ownerPassword: ownerPassword || userPassword });
+    post({ type: 'progress', value: 0.2 });
+    const doc = await PDFDocument.load(buffer, { ignoreEncryption: true });
+
+    post({ type: 'progress', value: 0.5 });
+    doc.encrypt({
+      userPassword,
+      ownerPassword: ownerPassword || userPassword,
+      permissions: {
+        printing: 'highResolution',
+        modifying: false,
+        copying: false,
+        annotating: false,
+        fillingForms: true,
+        contentAccessibility: true,
+        documentAssembly: false,
+      },
+    });
+
+    post({ type: 'progress', value: 0.8 });
     const bytes = await doc.save();
 
     post({ type: 'result', value: { bytes } }, [bytes.buffer as ArrayBuffer]);

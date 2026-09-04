@@ -8,5 +8,5 @@ export const meta: ToolMeta = {
   category: 'pdf-security',
   input: { accepts: ['pdf'], minFiles: 1, maxFiles: 10 },
   output: { kind: 'pdf' },
-  mode: 'local',
+  mode: 'worker',
 };

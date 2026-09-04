@@ -18,12 +18,16 @@ function post(
 ctx.addEventListener('message', async (e: MessageEvent<PdfUnlockWorkerInput>) => {
   try {
     const { buffer, password } = e.data;
-    const { PDFDocument } = await import('pdf-lib');
+    const { PDFDocument } = await import('@cantoo/pdf-lib');
 
-    const doc = password
-      ? // @ts-expect-error pdf-lib types don't expose password option but it is accepted at runtime
-        await PDFDocument.load(buffer, { password })
-      : await PDFDocument.load(buffer, { ignoreEncryption: true });
+    // Try password-based decryption first; fall back to ignoreEncryption for
+    // PDFs that only have restrictions but no user password.
+    let doc;
+    if (password) {
+      doc = await PDFDocument.load(buffer, { password });
+    } else {
+      doc = await PDFDocument.load(buffer, { ignoreEncryption: true });
+    }
     const bytes = await doc.save();
 
     post({ type: 'result', value: { bytes } }, [bytes.buffer as ArrayBuffer]);

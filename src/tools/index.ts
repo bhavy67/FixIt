@@ -40,6 +40,7 @@ import { pdfRedactTool } from './pdf-redact/definition';
 import { pdfOcrTool } from './pdf-ocr/definition';
 import { pdfEncryptTool } from './pdf-encrypt/definition';
 import { pdfExtractImagesTool } from './pdf-extract-images/definition';
+import { pdfUnlockTool } from './pdf-unlock/definition';
 
 // Side effect: run once when this module is first imported.
 let registered = false;
@@ -87,6 +88,7 @@ function ensureRegistered(): void {
   registerTool(pdfOcrTool);
   registerTool(pdfEncryptTool);
   registerTool(pdfExtractImagesTool);
+  registerTool(pdfUnlockTool);
 }
 
 ensureRegistered();

@@ -28,8 +28,8 @@ export function PdfRedactOptionsForm({ value, onChange }: OptionsFormProps<PdfRe
           className={textareaCls}
         />
         <p className={helperCls}>
-          Enter one word or phrase per line. Each matching text block will be covered with a black
-          rectangle.
+          Enter one word or phrase per line. Pages with matches are rasterized so the underlying
+          text is permanently removed — clean pages stay vector-perfect.
         </p>
       </div>
 

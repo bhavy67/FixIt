@@ -25,22 +25,39 @@ export async function processPdfToAudio(
     if (signal.aborted) throw new DOMException('cancelled', 'AbortError');
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
-    const pageText = content.items
-      .map((item) => ('str' in item ? (item as { str: string }).str : ''))
-      .join(' ')
-      .trim();
+
+    // Preserve line breaks by grouping items with the same Y transform.
+    const lines: string[] = [];
+    let currentY: number | null = null;
+    let currentLine = '';
+    for (const item of content.items) {
+      if (!('str' in item)) continue;
+      const typedItem = item as { str: string; transform: number[]; hasEOL?: boolean };
+      const y = Math.round(typedItem.transform[5] ?? 0);
+      if (currentY !== null && y !== currentY) {
+        if (currentLine.trim()) lines.push(currentLine.trim());
+        currentLine = '';
+      }
+      currentY = y;
+      currentLine += typedItem.str;
+      if (typedItem.hasEOL) {
+        if (currentLine.trim()) lines.push(currentLine.trim());
+        currentLine = '';
+        currentY = null;
+      }
+    }
+    if (currentLine.trim()) lines.push(currentLine.trim());
+
+    const pageText = lines.join('\n').trim();
     if (pageText) parts.push(`=== Page ${i} ===\n${pageText}`);
     onProgress(0.1 + (i / pdf.numPages) * 0.9);
   }
 
   const text = parts.join('\n\n');
-  const blob = new Blob([text], { type: 'text/plain' });
-
-  if (typeof speechSynthesis !== 'undefined') {
-    speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    speechSynthesis.speak(utterance);
+  if (!text) {
+    throw new Error('No readable text found in this PDF (it may be a scanned image).');
   }
+  const blob = new Blob([text], { type: 'text/plain' });
 
   return { outputs: [{ blob, filename: `${base}-transcript.txt`, bytes: blob.size }] };
 }

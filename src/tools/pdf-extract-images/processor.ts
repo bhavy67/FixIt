@@ -13,7 +13,10 @@ export async function processPdfExtractImages(
 
   onProgress(0.1);
   const pdfjsLib = await import('pdfjs-dist');
-  pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+    'pdfjs-dist/build/pdf.worker.min.mjs',
+    import.meta.url,
+  ).toString();
 
   const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(buffer) }).promise;
   const pageCount = pdf.numPages;

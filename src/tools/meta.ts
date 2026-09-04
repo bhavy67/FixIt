@@ -40,6 +40,7 @@ import { meta as pdfRedactMeta } from './pdf-redact/meta';
 import { meta as pdfOcrMeta } from './pdf-ocr/meta';
 import { meta as pdfEncryptMeta } from './pdf-encrypt/meta';
 import { meta as pdfExtractImagesMeta } from './pdf-extract-images/meta';
+import { meta as pdfUnlockMeta } from './pdf-unlock/meta';
 
 /**
  * The canonical list of registered tools' metadata. Safe to import from
@@ -87,6 +88,7 @@ export const TOOLS_META: readonly ToolMeta[] = [
   pdfOcrMeta,
   pdfEncryptMeta,
   pdfExtractImagesMeta,
+  pdfUnlockMeta,
 ];
 
 export function getToolMetaBySlug(slug: string): ToolMeta | undefined {
