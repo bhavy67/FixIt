@@ -1,11 +1,8 @@
-import type { Alignment } from './options';
+import type { PdfHeadersFootersOptions } from './options';
 
 export interface PdfHeadersFootersWorkerInput {
   buffer: ArrayBuffer;
-  headerText: string;
-  footerText: string;
-  fontSize: number;
-  alignment: Alignment;
+  options: PdfHeadersFootersOptions;
 }
 
 export interface PdfHeadersFootersWorkerResult {

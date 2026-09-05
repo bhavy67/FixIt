@@ -9,15 +9,19 @@ export type PageNumberPosition =
 export interface PdfPageNumbersOptions {
   position: PageNumberPosition;
   startNumber: number;
-  prefix: string;
+  /** Free-form pattern with {page} and {total} tokens. */
+  pattern: string;
   fontSize: number;
+  /** Number of leading pages to leave un-numbered (title pages, cover). */
+  skipFirstN: number;
 }
 
 export const DEFAULT_OPTIONS: PdfPageNumbersOptions = {
   position: 'bottom-center',
   startNumber: 1,
-  prefix: '',
+  pattern: '{page}',
   fontSize: 10,
+  skipFirstN: 0,
 };
 
 export const POSITION_LABELS: Record<PageNumberPosition, string> = {

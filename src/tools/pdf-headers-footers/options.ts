@@ -5,6 +5,8 @@ export interface PdfHeadersFootersOptions {
   footerText: string;
   fontSize: number;
   alignment: Alignment;
+  /** Skip N leading pages (title/cover). */
+  skipFirstN: number;
 }
 
 export const DEFAULT_OPTIONS: PdfHeadersFootersOptions = {
@@ -12,4 +14,5 @@ export const DEFAULT_OPTIONS: PdfHeadersFootersOptions = {
   footerText: 'Page {page} of {total}',
   fontSize: 10,
   alignment: 'center',
+  skipFirstN: 0,
 };

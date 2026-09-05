@@ -8,10 +8,26 @@ export async function processPdfOcr(
   const scaleMap = { standard: 1.5, high: 2.0 };
   const scale = scaleMap[options.quality];
 
-  onProgress(0.05);
+  onProgress(0.02);
+
+  // Compute a stable progress window for each page across all files, so
+  // tesseract's fine-grained logger events map cleanly onto the tool's bar.
+  const totalPages = await countPages(files, options);
+  let progressBase = 0.05;
+  const usable = 0.9;
+  const perPage = totalPages > 0 ? usable / totalPages : usable;
 
   const { createWorker } = await import('tesseract.js');
-  const worker = await createWorker(options.lang);
+  const worker = await createWorker(options.lang, 1, {
+    // tesseract.js v7 caches language data in IndexedDB by default — this
+    // just ensures we hit the cache on subsequent runs.
+    cachePath: '/',
+    logger: (m: { status: string; progress: number }) => {
+      if (m.status === 'recognizing text' && typeof m.progress === 'number') {
+        onProgress(Math.min(0.98, progressBase + m.progress * perPage));
+      }
+    },
+  });
 
   try {
     const outputs: ProcessingResultBlob[] = [];
@@ -19,9 +35,6 @@ export async function processPdfOcr(
     for (let fi = 0; fi < files.length; fi++) {
       if (signal.aborted) throw new DOMException('cancelled', 'AbortError');
       const file = files[fi]!;
-      const fileBase = 0.05 + (fi / files.length) * 0.9;
-      const fileStep = 0.9 / files.length;
-
       let text: string;
 
       if (file.kind === 'pdf') {
@@ -48,15 +61,16 @@ export async function processPdfOcr(
 
           const { data } = await worker.recognize(canvas);
           pageTexts.push(numPages > 1 ? `--- Page ${pageNum} ---\n${data.text}` : data.text);
-          onProgress(fileBase + (pageNum / numPages) * fileStep);
+          progressBase = Math.min(0.95, progressBase + perPage);
+          onProgress(progressBase);
         }
 
         text = pageTexts.join('\n\n');
       } else {
-        // image: recognize directly
         const { data } = await worker.recognize(file.file);
         text = data.text;
-        onProgress(fileBase + fileStep);
+        progressBase = Math.min(0.95, progressBase + perPage);
+        onProgress(progressBase);
       }
 
       const blob = new Blob([text.trim()], { type: 'text/plain' });
@@ -69,4 +83,27 @@ export async function processPdfOcr(
   } finally {
     await worker.terminate();
   }
+}
+
+async function countPages(
+  files: ProcessingContext<PdfOcrOptions>['files'],
+  _options: PdfOcrOptions,
+): Promise<number> {
+  let total = 0;
+  const pdfjsLib = await import('pdfjs-dist');
+  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+    'pdfjs-dist/build/pdf.worker.min.mjs',
+    import.meta.url,
+  ).toString();
+
+  for (const file of files) {
+    if (file.kind === 'pdf') {
+      const buf = await file.file.arrayBuffer();
+      const doc = await pdfjsLib.getDocument({ data: new Uint8Array(buf) }).promise;
+      total += doc.numPages;
+    } else {
+      total += 1;
+    }
+  }
+  return total;
 }

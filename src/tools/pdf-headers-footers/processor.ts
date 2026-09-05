@@ -14,13 +14,7 @@ export async function processPdfHeadersFooters(
   onProgress(0.3);
 
   const worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
-  const input: PdfHeadersFootersWorkerInput = {
-    buffer,
-    headerText: options.headerText,
-    footerText: options.footerText,
-    fontSize: options.fontSize,
-    alignment: options.alignment,
-  };
+  const input: PdfHeadersFootersWorkerInput = { buffer, options };
 
   const { bytes } = await runInWorker<PdfHeadersFootersWorkerResult>({
     worker,

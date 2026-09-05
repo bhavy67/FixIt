@@ -14,13 +14,7 @@ export async function processPdfPageNumbers(
   onProgress(0.3);
 
   const worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
-  const input: PdfPageNumbersWorkerInput = {
-    buffer,
-    position: options.position,
-    startNumber: options.startNumber,
-    prefix: options.prefix,
-    fontSize: options.fontSize,
-  };
+  const input: PdfPageNumbersWorkerInput = { buffer, options };
 
   const { bytes } = await runInWorker<PdfPageNumbersWorkerResult>({
     worker,

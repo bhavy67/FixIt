@@ -1,11 +1,8 @@
-import type { PageNumberPosition } from './options';
+import type { PdfPageNumbersOptions } from './options';
 
 export interface PdfPageNumbersWorkerInput {
   buffer: ArrayBuffer;
-  position: PageNumberPosition;
-  startNumber: number;
-  prefix: string;
-  fontSize: number;
+  options: PdfPageNumbersOptions;
 }
 
 export interface PdfPageNumbersWorkerResult {

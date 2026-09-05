@@ -17,6 +17,7 @@ export function PdfHeadersFootersOptionsForm({
   const footerId = useId();
   const sizeId = useId();
   const alignId = useId();
+  const skipId = useId();
 
   const set = <K extends keyof PdfHeadersFootersOptions>(
     k: K,
@@ -56,7 +57,7 @@ export function PdfHeadersFootersOptionsForm({
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         <div className="flex flex-col gap-1.5">
           <label htmlFor={sizeId} className={labelCls}>
             Font size (pt)
@@ -69,6 +70,21 @@ export function PdfHeadersFootersOptionsForm({
             step={1}
             value={value.fontSize}
             onChange={(e) => set('fontSize', Math.max(6, Math.min(24, Number(e.target.value))))}
+            className={inputCls}
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor={skipId} className={labelCls}>
+            Skip first
+          </label>
+          <input
+            id={skipId}
+            type="number"
+            min={0}
+            step={1}
+            value={value.skipFirstN}
+            onChange={(e) => set('skipFirstN', Math.max(0, Number(e.target.value)))}
             className={inputCls}
           />
         </div>
@@ -89,6 +105,10 @@ export function PdfHeadersFootersOptionsForm({
           </select>
         </div>
       </div>
+      <p className={helperCls}>
+        Unicode (accents, symbols, non-Latin scripts) is supported via an embedded font. Skip
+        first N pages leaves cover/title pages untouched.
+      </p>
     </div>
   );
 }

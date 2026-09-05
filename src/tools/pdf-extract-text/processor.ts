@@ -25,10 +25,39 @@ export async function processPdfExtractText(
     if (signal.aborted) throw new DOMException('cancelled', 'AbortError');
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
-    const pageText = content.items
-      .map((item) => ('str' in item ? (item as { str: string }).str : ''))
-      .join(' ')
-      .trim();
+
+    // Group text items into lines by shared Y baseline; emit blank lines when
+    // Y jumps more than a full line height (paragraph break heuristic).
+    const lines: string[] = [];
+    let currentY: number | null = null;
+    let lastLineHeight = 10;
+    let currentLine = '';
+
+    for (const item of content.items) {
+      if (!('str' in item)) continue;
+      const typedItem = item as { str: string; transform: number[]; hasEOL?: boolean };
+      const y = Math.round(typedItem.transform[5] ?? 0);
+      const h = Math.abs(typedItem.transform[3] ?? 10) || 10;
+
+      if (currentY !== null && y !== currentY) {
+        if (currentLine.trim()) lines.push(currentLine.trim());
+        currentLine = '';
+        // If we skipped more than 1.5× the previous line height, insert a
+        // blank line to preserve paragraph structure.
+        if (Math.abs(currentY - y) > lastLineHeight * 1.5) lines.push('');
+      }
+      currentY = y;
+      lastLineHeight = h;
+      currentLine += typedItem.str;
+      if (typedItem.hasEOL) {
+        if (currentLine.trim()) lines.push(currentLine.trim());
+        currentLine = '';
+        currentY = null;
+      }
+    }
+    if (currentLine.trim()) lines.push(currentLine.trim());
+
+    const pageText = lines.join('\n').trim();
     if (pageText) parts.push(`=== Page ${i} ===\n${pageText}`);
     onProgress(0.1 + (i / pdf.numPages) * 0.9);
   }

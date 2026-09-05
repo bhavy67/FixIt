@@ -7,6 +7,7 @@ import { POSITION_LABELS, type PageNumberPosition, type PdfPageNumbersOptions } 
 const inputCls =
   'border-input bg-background text-foreground focus-visible:ring-ring h-9 w-full rounded-md border px-3 text-sm shadow-xs transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50';
 const labelCls = 'text-foreground text-xs font-medium';
+const helperCls = 'text-muted-foreground text-[11px]';
 
 export function PdfPageNumbersOptionsForm({
   value,
@@ -14,8 +15,9 @@ export function PdfPageNumbersOptionsForm({
 }: OptionsFormProps<PdfPageNumbersOptions>) {
   const posId = useId();
   const startId = useId();
-  const prefixId = useId();
+  const patternId = useId();
   const sizeId = useId();
+  const skipId = useId();
 
   const set = <K extends keyof PdfPageNumbersOptions>(k: K, v: PdfPageNumbersOptions[K]) =>
     onChange({ ...value, [k]: v });
@@ -40,10 +42,28 @@ export function PdfPageNumbersOptionsForm({
         </select>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor={patternId} className={labelCls}>
+          Format
+        </label>
+        <input
+          id={patternId}
+          type="text"
+          value={value.pattern}
+          onChange={(e) => set('pattern', e.target.value)}
+          placeholder='e.g. "Page {page} of {total}"'
+          className={inputCls}
+        />
+        <p className={helperCls}>
+          Use <code>{'{page}'}</code> and <code>{'{total}'}</code>. Leave as <code>{'{page}'}</code>{' '}
+          for a bare number.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
         <div className="flex flex-col gap-1.5">
           <label htmlFor={startId} className={labelCls}>
-            Start number
+            Start at
           </label>
           <input
             id={startId}
@@ -58,8 +78,23 @@ export function PdfPageNumbersOptionsForm({
         </div>
 
         <div className="flex flex-col gap-1.5">
+          <label htmlFor={skipId} className={labelCls}>
+            Skip first
+          </label>
+          <input
+            id={skipId}
+            type="number"
+            min={0}
+            step={1}
+            value={value.skipFirstN}
+            onChange={(e) => set('skipFirstN', Math.max(0, Number(e.target.value)))}
+            className={inputCls}
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
           <label htmlFor={sizeId} className={labelCls}>
-            Font size (pt)
+            Font (pt)
           </label>
           <input
             id={sizeId}
@@ -73,20 +108,10 @@ export function PdfPageNumbersOptionsForm({
           />
         </div>
       </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor={prefixId} className={labelCls}>
-          Prefix
-        </label>
-        <input
-          id={prefixId}
-          type="text"
-          value={value.prefix}
-          onChange={(e) => set('prefix', e.target.value)}
-          placeholder='e.g. "Page " → Page 1'
-          className={inputCls}
-        />
-      </div>
+      <p className={helperCls}>
+        Skip first N pages leaves title/cover pages un-numbered. Numbering restarts from “Start
+        at” on the first numbered page.
+      </p>
     </div>
   );
 }

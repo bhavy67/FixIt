@@ -17,37 +17,68 @@ function post(
 
 const MARGIN = 28; // points (~10mm)
 
+function resolvePattern(pattern: string, page: number, total: number): string {
+  return pattern.replace(/\{page\}/g, String(page)).replace(/\{total\}/g, String(total));
+}
+
+async function loadUnicodeFont(): Promise<Uint8Array | null> {
+  try {
+    const res = await fetch('/fonts/Geist-Regular.ttf');
+    if (!res.ok) return null;
+    return new Uint8Array(await res.arrayBuffer());
+  } catch {
+    return null;
+  }
+}
+
 ctx.addEventListener('message', async (e: MessageEvent<PdfPageNumbersWorkerInput>) => {
   try {
-    const { buffer, position, startNumber, prefix, fontSize } = e.data;
+    const { buffer, options } = e.data;
     const { PDFDocument, rgb, StandardFonts } = await import('pdf-lib');
 
     const doc = await PDFDocument.load(buffer, { ignoreEncryption: true });
-    const font = await doc.embedFont(StandardFonts.Helvetica);
+
+    let font;
+    const ttfBytes = await loadUnicodeFont();
+    if (ttfBytes) {
+      const fontkit = (await import('@pdf-lib/fontkit')).default;
+      doc.registerFontkit(fontkit);
+      font = await doc.embedFont(ttfBytes, { subset: true });
+    } else {
+      font = await doc.embedFont(StandardFonts.Helvetica);
+    }
+
     const pages = doc.getPages();
-    const isTop = position.startsWith('top');
+    const total = pages.length;
+    const isTop = options.position.startsWith('top');
 
     for (let i = 0; i < pages.length; i++) {
       const page = pages[i]!;
       const { width, height } = page.getSize();
-      const label = `${prefix}${startNumber + i}`;
-      const textWidth = font.widthOfTextAtSize(label, fontSize);
+
+      if (i < options.skipFirstN) {
+        post({ type: 'progress', value: (i + 1) / pages.length });
+        continue;
+      }
+
+      const displayNum = options.startNumber + (i - options.skipFirstN);
+      const label = resolvePattern(options.pattern, displayNum, total - options.skipFirstN);
+      const textWidth = font.widthOfTextAtSize(label, options.fontSize);
 
       let x: number;
-      if (position.endsWith('center')) {
+      if (options.position.endsWith('center')) {
         x = (width - textWidth) / 2;
-      } else if (position.endsWith('right')) {
+      } else if (options.position.endsWith('right')) {
         x = width - textWidth - MARGIN;
       } else {
         x = MARGIN;
       }
-
-      const y = isTop ? height - MARGIN - fontSize : MARGIN;
+      const y = isTop ? height - MARGIN - options.fontSize : MARGIN;
 
       page.drawText(label, {
         x,
         y,
-        size: fontSize,
+        size: options.fontSize,
         font,
         color: rgb(0, 0, 0),
         opacity: 0.7,
