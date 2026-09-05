@@ -14,6 +14,7 @@ export function PdfSignPreviewPanel({ value, onChange }: OptionsFormProps<PdfSig
 
   const [totalPages, setTotalPages] = useState(1);
   const [pdfLoaded, setPdfLoaded] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const dragState = useRef<{
     startX: number; startY: number; startSigX: number; startSigY: number;
@@ -29,6 +30,7 @@ export function PdfSignPreviewPanel({ value, onChange }: OptionsFormProps<PdfSig
 
     let cancelled = false;
     setPdfLoaded(false);
+    setLoadError(null);
 
     (async () => {
       let doc: PDFDocumentProxy;
@@ -66,7 +68,10 @@ export function PdfSignPreviewPanel({ value, onChange }: OptionsFormProps<PdfSig
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       await page.render({ canvasContext: ctx, viewport: scaled, canvas }).promise;
       if (!cancelled) setPdfLoaded(true);
-    })().catch(console.error);
+    })().catch((err) => {
+      if (cancelled) return;
+      setLoadError(err instanceof Error ? err.message : String(err));
+    });
 
     return () => { cancelled = true; };
   }, [file, value.page]);
@@ -176,10 +181,18 @@ export function PdfSignPreviewPanel({ value, onChange }: OptionsFormProps<PdfSig
           {/* PDF canvas */}
           <canvas ref={pdfCanvasRef} className="block w-full rounded-sm" />
 
-          {/* Loading overlay */}
-          {!pdfLoaded && (
+          {/* Loading / error overlay */}
+          {!pdfLoaded && !loadError && (
             <div className="absolute inset-0 flex items-center justify-center bg-white/90 rounded-sm">
               <span className="text-xs text-muted-foreground">Loading preview…</span>
+            </div>
+          )}
+          {loadError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/95 rounded-sm p-6">
+              <div className="max-w-sm text-center">
+                <p className="text-xs font-medium text-destructive mb-1">Preview failed</p>
+                <p className="text-xs text-muted-foreground break-words">{loadError}</p>
+              </div>
             </div>
           )}
 

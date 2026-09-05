@@ -41,13 +41,16 @@ ctx.addEventListener('message', async (e: MessageEvent<PdfSplitWorkerInput>) => 
     const total = src.getPageCount();
     const files: Array<{ name: string; bytes: Uint8Array }> = [];
 
+    const padLen = String(total).length;
+    const pad = (n: number): string => String(n).padStart(padLen, '0');
+
     if (options.mode === 'each-page') {
       for (let i = 0; i < total; i++) {
         const out = await PDFDocument.create();
         const [copied] = await out.copyPages(src, [i]);
         out.addPage(copied!);
         const bytes = await out.save();
-        files.push({ name: `page-${i + 1}.pdf`, bytes });
+        files.push({ name: `page-${pad(i + 1)}.pdf`, bytes });
         post({ type: 'progress', value: (i + 1) / total });
       }
     } else {
@@ -58,9 +61,10 @@ ctx.addEventListener('message', async (e: MessageEvent<PdfSplitWorkerInput>) => 
         const copied = await out.copyPages(src, indices);
         copied.forEach((p) => out.addPage(p));
         const bytes = await out.save();
-        const label = indices.length === 1
-          ? `page-${(indices[0] ?? 0) + 1}`
-          : `pages-${(indices[0] ?? 0) + 1}-${(indices[indices.length - 1] ?? 0) + 1}`;
+        const label =
+          indices.length === 1
+            ? `page-${pad((indices[0] ?? 0) + 1)}`
+            : `pages-${pad((indices[0] ?? 0) + 1)}-${pad((indices[indices.length - 1] ?? 0) + 1)}`;
         files.push({ name: `${label}.pdf`, bytes });
         post({ type: 'progress', value: (s + 1) / segments.length });
       }

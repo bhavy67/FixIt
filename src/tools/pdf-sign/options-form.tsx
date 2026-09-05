@@ -13,6 +13,13 @@ const COLORS = [
   { value: '#7c3aed', label: 'Purple' },
 ];
 
+// Cross-OS signature font stack — falls through Windows/Mac/Linux cursive
+// scripts, with the generic `cursive` family as a last resort. Same string
+// is used for the canvas and the on-screen preview so they always match.
+const SIGNATURE_FONT_STACK =
+  '"Segoe Script", "Bradley Hand", "Snell Roundhand", "Brush Script MT", "Lucida Handwriting", "URW Chancery L", cursive';
+const SIGNATURE_FONT = `62px ${SIGNATURE_FONT_STACK}`;
+
 function getDrawPoint(e: React.PointerEvent<HTMLCanvasElement>) {
   const canvas = e.currentTarget;
   const rect = canvas.getBoundingClientRect();
@@ -30,7 +37,7 @@ function renderTypedSignature(text: string, color: string): string {
   canvas.height = 130;
   const ctx = canvas.getContext('2d');
   if (!ctx) return '';
-  ctx.font = '62px "Brush Script MT", "Segoe Script", "Bradley Hand ITC", cursive';
+  ctx.font = SIGNATURE_FONT;
   ctx.fillStyle = color;
   ctx.textBaseline = 'middle';
   ctx.textAlign = 'center';
@@ -92,9 +99,8 @@ export function PdfSignOptionsForm({ value, onChange }: OptionsFormProps<PdfSign
 
   const handleClear = useCallback(() => {
     const canvas = drawCanvasRef.current;
-    if (!canvas) return;
-    canvas.getContext('2d')?.clearRect(0, 0, canvas.width, canvas.height);
-    onChange({ ...value, signatureDataUrl: '' });
+    canvas?.getContext('2d')?.clearRect(0, 0, canvas.width, canvas.height);
+    onChange({ ...value, signatureDataUrl: '', typedText: '' });
   }, [value, onChange]);
 
   const applyColor = (c: string) => {
@@ -144,7 +150,7 @@ export function PdfSignOptionsForm({ value, onChange }: OptionsFormProps<PdfSign
             <div
               className="rounded-md border border-dashed border-input bg-white min-h-[56px] flex items-center justify-center overflow-hidden px-3"
               style={{
-                fontFamily: '"Brush Script MT","Segoe Script","Bradley Hand ITC",cursive',
+                fontFamily: SIGNATURE_FONT_STACK,
                 fontSize: 36,
                 color: activeColor,
                 lineHeight: 1.2,
