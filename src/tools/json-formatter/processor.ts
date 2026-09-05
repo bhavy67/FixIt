@@ -9,7 +9,10 @@ function formatOne(text: string, opts: JsonFormatterOptions): string {
 }
 
 function outFilename(originalName: string, opts: JsonFormatterOptions): string {
-  const base = originalName.replace(/\.[^.]+$/, '') || 'data';
+  // Strip only a trailing `.json` (case-insensitive) so "data.json.bak" and
+  // "config.JSON" both round-trip cleanly. The previous `\.[^.]+$` regex
+  // ate the wrong extension for names like "data.json.bak".
+  const base = originalName.replace(/\.json$/i, '') || 'data';
   const suffix = opts.mode === 'pretty' ? 'formatted' : 'min';
   return `${base}.${suffix}.json`;
 }

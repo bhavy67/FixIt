@@ -9,8 +9,9 @@ async function resizeOne(file: File, opts: ImageResizeOptions): Promise<Blob> {
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('2D canvas context unavailable');
 
-    // JPEG has no alpha channel; fill white so `contain` letterboxing isn't black.
-    if (opts.format === 'image/jpeg') {
+    // JPEG has no alpha channel; only `contain` leaves empty margins that
+    // need a background paint. `cover` always fills the whole canvas.
+    if (opts.format === 'image/jpeg' && opts.fit === 'contain') {
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, opts.width, opts.height);
     }

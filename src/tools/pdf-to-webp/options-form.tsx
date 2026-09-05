@@ -17,6 +17,7 @@ const SCALE_LABELS: Record<RenderScale, string> = {
 export function PdfToWebpOptionsForm({ value, onChange }: OptionsFormProps<PdfToWebpOptions>) {
   const scaleId = useId();
   const qualityId = useId();
+  const bundleId = useId();
 
   return (
     <div className="border-border bg-card flex flex-col gap-4 rounded-xl border p-4">
@@ -58,6 +59,22 @@ export function PdfToWebpOptionsForm({ value, onChange }: OptionsFormProps<PdfTo
           className="w-full"
         />
       </div>
+
+      <label className="flex items-start gap-3">
+        <input
+          id={bundleId}
+          type="checkbox"
+          checked={value.bundle}
+          onChange={(e) => onChange({ ...value, bundle: e.target.checked })}
+          className="mt-0.5 size-4 rounded"
+        />
+        <div className="flex flex-col gap-0.5">
+          <span className={labelCls}>Bundle pages as a ZIP</span>
+          <span className="text-muted-foreground text-xs">
+            Downloads a single archive instead of one image per page.
+          </span>
+        </div>
+      </label>
     </div>
   );
 }

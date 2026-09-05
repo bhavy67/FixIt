@@ -1,4 +1,5 @@
 /// <reference lib="webworker" />
+import { parsePageRange } from '@/core/pdf-page-range';
 import type { WorkerMessage } from '@/core/worker-runner';
 import type { PdfRotateWorkerInput, PdfRotateWorkerResult } from './worker-types';
 
@@ -12,25 +13,6 @@ function post(message: WorkerMessage<PdfRotateWorkerResult>, transfer?: Transfer
   }
 }
 
-function parsePages(input: string, total: number): number[] {
-  const trimmed = input.trim().toLowerCase();
-  if (trimmed === 'all' || trimmed === '') return Array.from({ length: total }, (_, i) => i);
-  const pages = new Set<number>();
-  for (const part of trimmed.split(',')) {
-    const seg = part.trim();
-    if (seg.includes('-')) {
-      const [a, b] = seg.split('-').map(Number);
-      const from = Math.max(1, a ?? 1);
-      const to = Math.min(total, b ?? total);
-      for (let i = from; i <= to; i++) pages.add(i - 1);
-    } else {
-      const n = Number(seg);
-      if (Number.isFinite(n) && n >= 1 && n <= total) pages.add(n - 1);
-    }
-  }
-  return [...pages].sort((a, b) => a - b);
-}
-
 ctx.addEventListener('message', async (e: MessageEvent<PdfRotateWorkerInput>) => {
   try {
     const { buffer, degrees: rotation, pages } = e.data;
@@ -38,7 +20,7 @@ ctx.addEventListener('message', async (e: MessageEvent<PdfRotateWorkerInput>) =>
 
     const doc = await PDFDocument.load(buffer, { ignoreEncryption: true });
     const total = doc.getPageCount();
-    const targetIndices = new Set(parsePages(pages, total));
+    const targetIndices = new Set(parsePageRange(pages, total));
 
     doc.getPages().forEach((page, i) => {
       if (targetIndices.has(i)) {
