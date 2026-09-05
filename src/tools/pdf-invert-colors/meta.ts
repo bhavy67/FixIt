@@ -8,5 +8,5 @@ export const meta: ToolMeta = {
   category: 'pdf',
   input: { accepts: ['pdf'], minFiles: 1, maxFiles: 1 },
   output: { kind: 'pdf' },
-  mode: 'local',
+  mode: 'worker',
 };
